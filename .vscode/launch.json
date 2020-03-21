@@ -17,7 +17,10 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "outputCapture": "std"
+      "outputCapture": "std",
+      "env": {
+        "LOG_LEVEL": "verbose"
+      }
     },
     {
       "type": "node",

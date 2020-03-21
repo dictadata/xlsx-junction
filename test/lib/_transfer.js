@@ -13,7 +13,7 @@ const pipeline = util.promisify(stream.pipeline);
 /**
  * transfer fucntion
  */
-module.exports = async function (options) {
+module.exports = exports = async function (options) {
 
   logger.info(">>> create junctions");
   var j1 = storage.activate(options.source.smt, options.source.options);

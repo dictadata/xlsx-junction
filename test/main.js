@@ -40,14 +40,20 @@ async function readStream() {
   // doesn't really matter what is used for the echo SMT
   var junction2 = storage.activate({
     smt: {
-      model:"echo",
-      locus: ".",
-      schema: "console",
+      model:"json",
+      locus: "./test/output/",
+      schema: "foofile_xlsx.json",
       key: "*"
     }
   }, {
     logger: logger
   });
+
+  console.log(">>> encoding");
+  let encoding = await junction1.getEncoding();
+  let result_encoding = await junction2.putEncoding(encoding);
+  if (!result_encoding)
+    logger.warn("could not create storage schema, maybe it already exists");
 
   console.log(">>> create streams");
   var reader = junction1.getReadStream({});
@@ -69,7 +75,7 @@ async function writeStream() {
   console.log(">>> create junction");
   var junction1 = storage.activate({
     smt: {
-      model:"json",
+      model: "json",
       locus: "test/data/",
       schema: "foofile.json",
       key: "*"
@@ -82,13 +88,19 @@ async function writeStream() {
   var junction2 = storage.activate({
     smt: {
       model:"xlsx",
-      locus: "test/output/foofile.xlsx",
+      locus: "test/output/foofile_json.xlsx",
       schema: "foo",
       key: "*"
     }
   }, {
     logger: logger
   });
+
+  console.log(">>> encoding");
+  let encoding = await junction1.getEncoding();
+  let result_encoding = await junction2.putEncoding(encoding);
+  if (!result_encoding)
+    logger.warn("could not create storage schema, maybe it already exists");
 
   console.log(">>> create streams");
   var reader = junction1.getReadStream({});

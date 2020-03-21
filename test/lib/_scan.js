@@ -6,7 +6,7 @@
 const storage = require('@dictadata/storage-junctions');
 const logger = require('../logger');
 
-module.exports = async function (options) {
+module.exports = exports = async function (options) {
 
   logger.info(">>> create junction");
   var j1 = storage.activate(options.source.smt, options.source.options);

@@ -4,4 +4,4 @@
 "use strict";
 
 var XlsxJunction = require("./lib/xlsx");
-module.exports = XlsxJunction;
+module.exports = exports = XlsxJunction;

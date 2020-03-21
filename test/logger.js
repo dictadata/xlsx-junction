@@ -18,4 +18,4 @@ if (process.env.NODE_ENV !== 'xproduction') {
   winston.add(new winston.transports.Console({ format: winston.format.errors({ stack: true }), level: 'error' }));
 }
 
-module.exports = winston;
+module.exports = exports = winston;
