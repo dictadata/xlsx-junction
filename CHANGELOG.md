@@ -1,0 +1,3 @@
+- version 1.0.0
+  - implement storage-junction interfaces
+  - implement basic read and write streams
