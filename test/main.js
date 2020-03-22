@@ -20,8 +20,103 @@ storage.use("xlsx", XlsxJunction);
 storage.use("echo", EchoJunction);
 
 
-async function readStream() {
-  console.log("=== readStream");
+async function readCsv() {
+  console.log("=== readCsv");
+
+  console.log(">>> create junction");
+  var junction1 = storage.activate({
+    smt: {
+      model:"xlsx",
+      locus: "test/data/foofile.xlsx",
+      schema: "foo",
+      key: "*"
+    }
+  },
+  {
+    sheetName: "foo",
+    logger: logger
+  });
+
+  // doesn't really matter what is used for the echo SMT
+  var junction2 = storage.activate({
+    smt: {
+      model:"csv",
+      locus: "./test/output/",
+      schema: "foofile_xlsx.csv",
+      key: "*"
+    }
+  }, {
+    logger: logger
+  });
+
+  console.log(">>> encoding");
+  let encoding = await junction1.getEncoding();
+  let result_encoding = await junction2.putEncoding(encoding);
+  if (!result_encoding)
+    logger.warn("could not create storage schema, maybe it already exists");
+
+  console.log(">>> create streams");
+  var reader = junction1.getReadStream({});
+  var writer = junction2.getWriteStream({});
+
+  console.log(">>> start pipe");
+  await pipeline(reader, writer);
+
+  await junction1.relax();
+  await junction2.relax();
+
+  console.log(">>> completed");
+}
+
+
+async function writeCsv() {
+  console.log("=== writeCsv");
+
+  console.log(">>> create junction");
+  var junction1 = storage.activate({
+    smt: {
+      model: "csv",
+      locus: "test/data/",
+      schema: "foofile.csv",
+      key: "*"
+    }
+  },
+  {
+    logger: logger
+  });
+
+  var junction2 = storage.activate({
+    smt: {
+      model:"xlsx",
+      locus: "test/output/foofile_csv.xlsx",
+      schema: "foo",
+      key: "*"
+    }
+  }, {
+    logger: logger
+  });
+
+  console.log(">>> encoding");
+  let encoding = await junction1.getEncoding();
+  let result_encoding = await junction2.putEncoding(encoding);
+  if (!result_encoding)
+    logger.warn("could not create storage schema, maybe it already exists");
+
+  console.log(">>> create streams");
+  var reader = junction1.getReadStream({});
+  var writer = junction2.getWriteStream({});
+
+  console.log(">>> start pipe");
+  await pipeline(reader, writer);
+
+  await junction1.relax();
+  await junction2.relax();
+
+  console.log(">>> completed");
+}
+
+async function readJson() {
+  console.log("=== readJson");
 
   console.log(">>> create junction");
   var junction1 = storage.activate({
@@ -69,8 +164,8 @@ async function readStream() {
 }
 
 
-async function writeStream() {
-  console.log("=== writeStream");
+async function writeJson() {
+  console.log("=== writeJson");
 
   console.log(">>> create junction");
   var junction1 = storage.activate({
@@ -117,8 +212,10 @@ async function writeStream() {
 
 
 async function tests() {
-  await readStream();
-  await writeStream();
+  await readCsv();
+  await writeCsv();
+  await readJson();
+  await writeJson();
 }
 
 tests();
