@@ -19,35 +19,38 @@ console.log("--- adding XlsxJunction to storage cortex");
 storage.use("xlsx", XlsxJunction);
 storage.use("echo", EchoJunction);
 
-
-async function readCsv() {
-  console.log("=== readCsv");
+/**
+ *
+ */
+async function Xlsx2Csv() {
+  console.log("=== read xlsx save CSV");
 
   console.log(">>> create junction");
-  var junction1 = storage.activate({
-    smt: {
-      model:"xlsx",
-      locus: "test/data/foofile.xlsx",
-      schema: "foo",
-      key: "*"
-    }
+  var junction1 = await storage.activate({
+    model: "xlsx",
+    locus: "test/data/foofile.xlsx",
+    schema: "foo",
+    key: "*"
   },
-  {
-    sheetName: "foo",
-    logger: logger
-  });
+    {
+      logger: logger,
+      reader: {
+        xlsx: {
+          sheetName: "foo"
+        }
+      }
+    });
 
   // doesn't really matter what is used for the echo SMT
-  var junction2 = storage.activate({
-    smt: {
-      model:"csv",
+  var junction2 = await storage.activate({
+      model: "csv",
       locus: "./test/output/",
-      schema: "foofile_xlsx.csv",
+      schema: "xlsx_foofile.csv",
       key: "*"
-    }
-  }, {
-    logger: logger
-  });
+    },
+    {
+      logger: logger
+    });
 
   console.log(">>> encoding");
   let encoding = await junction1.getEncoding();
@@ -68,33 +71,37 @@ async function readCsv() {
   console.log(">>> completed");
 }
 
-
-async function writeCsv() {
-  console.log("=== writeCsv");
+/**
+ *
+ */
+async function Csv2Xlsx() {
+  console.log("=== read csv write xlsx");
 
   console.log(">>> create junction");
-  var junction1 = storage.activate({
-    smt: {
+  var junction1 = await storage.activate({
       model: "csv",
       locus: "test/data/",
       schema: "foofile.csv",
       key: "*"
-    }
-  },
-  {
-    logger: logger
-  });
+    },
+    {
+      logger: logger
+    });
 
-  var junction2 = storage.activate({
-    smt: {
-      model:"xlsx",
-      locus: "test/output/foofile_csv.xlsx",
-      schema: "foo",
-      key: "*"
-    }
-  }, {
-    logger: logger
-  });
+  var junction2 = await storage.activate({
+    model: "xlsx",
+    locus: "test/output/csv_foofile.xlsx",
+    schema: "foo",
+    key: "*"
+  },
+    {
+      logger: logger,
+      writer: {
+        xlsx: {
+          sheetName: "foo"
+        }
+      }
+    });
 
   console.log(">>> encoding");
   let encoding = await junction1.getEncoding();
@@ -115,34 +122,38 @@ async function writeCsv() {
   console.log(">>> completed");
 }
 
-async function readJson() {
-  console.log("=== readJson");
+/**
+ *
+ */
+async function Xlsx2Json() {
+  console.log("=== read xlsx write json");
 
   console.log(">>> create junction");
-  var junction1 = storage.activate({
-    smt: {
-      model:"xlsx",
+  var junction1 = await storage.activate({
+      model: "xlsx",
       locus: "test/data/foofile.xlsx",
       schema: "foo",
       key: "*"
-    }
-  },
-  {
-    sheetName: "foo",
-    logger: logger
-  });
+    },
+    {
+      logger: logger,
+      reader: {
+        xlsx: {
+          sheetName: "foo"
+        }
+      }
+    });
 
   // doesn't really matter what is used for the echo SMT
-  var junction2 = storage.activate({
-    smt: {
-      model:"json",
+  var junction2 = await storage.activate({
+      model: "json",
       locus: "./test/output/",
-      schema: "foofile_xlsx.json",
+      schema: "xlsx_foofile.json",
       key: "*"
-    }
-  }, {
-    logger: logger
-  });
+    },
+    {
+      logger: logger
+    });
 
   console.log(">>> encoding");
   let encoding = await junction1.getEncoding();
@@ -163,33 +174,40 @@ async function readJson() {
   console.log(">>> completed");
 }
 
-
-async function writeJson() {
-  console.log("=== writeJson");
+/**
+ *
+ */
+async function Json2Xlsx() {
+  console.log("=== read json write xlsx");
 
   console.log(">>> create junction");
-  var junction1 = storage.activate({
-    smt: {
+  var junction1 = await storage.activate({
       model: "json",
       locus: "test/data/",
       schema: "foofile.json",
       key: "*"
-    }
-  },
-  {
-    logger: logger
-  });
+    },
+    {
+      logger: logger
+    });
 
-  var junction2 = storage.activate({
-    smt: {
-      model:"xlsx",
-      locus: "test/output/foofile_json.xlsx",
+  var junction2 = await storage.activate({
+      model: "xlsx",
+      locus: "test/output/json_foofile.xlsx",
       schema: "foo",
       key: "*"
-    }
-  }, {
-    logger: logger
-  });
+    },
+    {
+      logger: logger,
+      writer: {
+        xlsx: {
+          sheetName: "foo",
+          sheet: {
+            origin: 'B3'
+          }
+        }
+      }
+    });
 
   console.log(">>> encoding");
   let encoding = await junction1.getEncoding();
@@ -212,10 +230,10 @@ async function writeJson() {
 
 
 async function tests() {
-  await readCsv();
-  await writeCsv();
-  await readJson();
-  await writeJson();
+  await Xlsx2Csv();
+  await Csv2Xlsx();
+  await Xlsx2Json();
+  await Json2Xlsx();
 }
 
 tests();
