@@ -20,7 +20,7 @@ async function tests() {
   logger.info("=== xlsx recall");
   await recall({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|=Foo",
+      smt: "xlsx|test/output/foofile.xlsx|foo|=Foo",
       pattern: {
         match: {
           Foo: 'twenty'
@@ -35,7 +35,7 @@ async function tests() {
   logger.info("=== xlsx recall");
   await recall({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|=Foo",
+      smt: "xlsx|test/output/foofile.xlsx|foo|=Foo",
       pattern: {
         match: {
           Foo: 'ten'

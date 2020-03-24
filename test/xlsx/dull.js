@@ -20,7 +20,7 @@ async function tests() {
   logger.info("=== xlsx dull");
   await dull({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|*",
+      smt: "xlsx|test/output/foofile.xlsx|foo|*",
       pattern: {
         match: {
           Foo: 'twenty'

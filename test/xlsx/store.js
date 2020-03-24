@@ -20,7 +20,7 @@ async function tests() {
   logger.info("=== xlsx store 20");
   await store({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|=Foo",
+      smt: "xlsx|test/output/foofile.xlsx|foo|=Foo",
       options: {
         logger: logger
       }
@@ -35,7 +35,7 @@ async function tests() {
   logger.info("=== xlsx store 30");
   await store({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|=Foo",
+      smt: "xlsx|test/output/foofile.xlsx|foo|=Foo",
       options: {
         logger: logger
       }
@@ -51,7 +51,7 @@ async function tests() {
   logger.info("=== xlsx store 10");
   await store({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|=Foo",
+      smt: "xlsx|test/output/foofile.xlsx|foo|=Foo",
       options: {
         logger: logger
       }

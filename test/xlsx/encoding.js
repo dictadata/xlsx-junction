@@ -21,7 +21,7 @@ async function tests() {
   logger.info("=== xlsx putEncoding");
   await putEncoding({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|*",
+      smt: "xlsx|test/output/foofile.xlsx|foo|*",
       options: {
         logger: logger
       }
@@ -31,7 +31,7 @@ async function tests() {
   logger.info("=== xlsx getEncoding");
   await getEncoding({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|*",
+      smt: "xlsx|test/output/foofile.xlsx|foo|*",
       options: {
         logger: logger
       }

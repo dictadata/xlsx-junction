@@ -15,7 +15,7 @@ const pipeline = util.promisify(stream.pipeline);
 module.exports = exports = async function (options) {
 
   logger.info(">>> create junction");
-  var j1 = storage.activate(options.source.smt, options.source.options);
+  var j1 = await storage.activate(options.source.smt, options.source.options);
 
   try {
     // *** the normal way is to ask the junction to do it

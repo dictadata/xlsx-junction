@@ -12,7 +12,7 @@ module.exports = exports = async function (options) {
   logger.verbose(options.source.smt);
   logger.verbose(JSON.stringify(options.source.options));
 
-  var junction = storage.activate(options.source.smt, options.source.options);
+  var junction = await storage.activate(options.source.smt, options.source.options);
 
   try {
     let results = await junction.retrieve(options.source.pattern);

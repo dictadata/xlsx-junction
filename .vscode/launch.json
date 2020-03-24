@@ -35,6 +35,16 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "xlsx transfers",
+      "program": "${workspaceFolder}/test/xlsx/transfers.js",
+      "outputCapture": "std",
+      "env": {
+        "LOG_LEVEL": "verbose"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "xlsx store",
       "program": "${workspaceFolder}/test/xlsx/store.js",
       "outputCapture": "std",
@@ -67,16 +77,6 @@
       "request": "launch",
       "name": "xlsx dull",
       "program": "${workspaceFolder}/test/xlsx/dull.js",
-      "outputCapture": "std",
-      "env": {
-        "LOG_LEVEL": "verbose"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "xlsx transfers",
-      "program": "${workspaceFolder}/test/xlsx/transfers.js",
       "outputCapture": "std",
       "env": {
         "LOG_LEVEL": "verbose"

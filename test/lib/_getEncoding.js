@@ -10,7 +10,7 @@ const fs = require('fs');
 module.exports = exports = async function (options) {
 
   logger.info(">>> create junction");
-  var junction = storage.activate(options.source.smt, options.source.options);
+  var junction = await storage.activate(options.source.smt, options.source.options);
 
   try {
     let encoding = await junction.getEncoding();

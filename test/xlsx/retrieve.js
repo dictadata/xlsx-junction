@@ -20,7 +20,7 @@ async function tests() {
   logger.info("=== xlsx retrieve");
   await retrieve({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_schema|*",
+      smt: "xlsx|test/output/foofile.xlsx|foo|*",
       pattern: {
         match: {
           "Foo": 'twenty'
@@ -35,7 +35,7 @@ async function tests() {
   logger.info("=== xlsx retrieve with pattern");
   await retrieve({
     source: {
-      smt: "xlsx|DSN=drewlab|foo_transfer|*",
+      smt: "xlsx|test/output/foofile.xlsx|foo_transfer|*",
       pattern: {
         match: {
           "Foo": "first",
