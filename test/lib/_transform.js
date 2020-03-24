@@ -22,7 +22,7 @@ module.exports = exports = async function (options) {
     logger.debug(">>> get source encoding (codify)");
     let encoding = await j1.getEncoding();
 
-    for (let [name,value] of Object.entries(options.transforms.inject)) {
+    for (let [name,value] of Object.entries(options.transform.inject)) {
       encoding.add(new Field({name: name, type: Types.storageType(value)}));
     }
 
@@ -36,7 +36,7 @@ module.exports = exports = async function (options) {
 
     logger.info(">>> create streams");
     var reader = j1.getReadStream();
-    var transform = j1.getTransform(options.transforms);
+    var transform = j1.getTransform(options.transform);
     var writer = j2.getWriteStream();
 
     logger.info(">>> start pipe");
