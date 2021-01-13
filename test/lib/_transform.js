@@ -35,9 +35,9 @@ module.exports = exports = async function (options) {
       logger.info("could not create storage schema, maybe it already exists");
 
     logger.info(">>> create streams");
-    var reader = j1.getReadStream();
-    var transform = j1.getTransform(options.transform);
-    var writer = j2.getWriteStream();
+    var reader = j1.createReadStream();
+    var transform = j1.createTransform(options.transform);
+    var writer = j2.createWriteStream();
 
     logger.info(">>> start pipe");
     await pipeline(reader, transform, writer);

@@ -7,7 +7,7 @@ const storage = require("@dictadata/storage-junctions");
 const XlsxJunction = require("../../lib/xlsx");
 
 const dull = require('../lib/_dull');
-const logger = require('../logger');
+const logger = require('../../lib/logger');
 
 logger.info("=== Test: xlsx");
 
@@ -27,7 +27,7 @@ async function tests() {
         }
       },
       options: {
-        logger: logger
+
       }
     }
   });

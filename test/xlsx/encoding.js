@@ -8,7 +8,7 @@ const XlsxJunction = require("../../lib/xlsx");
 
 const getEncoding = require('../lib/_getEncoding');
 const putEncoding = require('../lib/_putEncoding');
-const logger = require('../logger');
+const logger = require('../../lib/logger');
 
 logger.info("=== Test: xlsx");
 
@@ -23,7 +23,7 @@ async function tests() {
     source: {
       smt: "xlsx|test/output/foofile.xlsx|foo|*",
       options: {
-        logger: logger
+
       }
     }
   });
@@ -33,7 +33,7 @@ async function tests() {
     source: {
       smt: "xlsx|test/output/foofile.xlsx|foo|*",
       options: {
-        logger: logger
+
       }
     },
     OutputFile: './test/output/xlsx_foo_encoding.json'

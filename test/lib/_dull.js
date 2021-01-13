@@ -4,7 +4,7 @@
 "use strict";
 
 const storage = require('@dictadata/storage-junctions');
-const logger = require('../logger');
+const logger = require('../../lib/logger');
 
 module.exports = exports = async function (options) {
 

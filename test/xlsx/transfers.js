@@ -22,13 +22,13 @@ async function tests() {
     source: {
       smt: "csv|test/data/|foofile.csv|*",
       options: {
-        logger: logger
+
       }
     },
     destination: {
       smt: "xlsx|test/output/csv_foofile.xlsx|foo|*",
       options: {
-        logger: logger
+
       }
     }
   });
@@ -38,13 +38,13 @@ async function tests() {
     source: {
       smt: "xlsx|test/output/csv_foofile.xlsx|foo|*",
       options: {
-        logger: logger
+
       }
     },
     destination: {
       smt: "csv|test/output/|xlsx_foofile.csv|*",
       options: {
-        logger: logger
+
       }
     }
   });
@@ -54,13 +54,13 @@ async function tests() {
     source: {
       smt: "json|test/data/|foofile.json|*",
       options: {
-        logger: logger
+
       }
     },
     destination: {
       smt: "xlsx|test/output/json_foofile.xlsx|foo|*",
       options: {
-        logger: logger
+
       }
     }
   });
@@ -70,13 +70,13 @@ async function tests() {
     source: {
       smt: "xlsx|test/output/json_foofile.xlsx|foo|*",
       options: {
-        logger: logger
+
       }
     },
     destination: {
       smt: "json|test/output/|xlsx_foofile.json|*",
       options: {
-        logger: logger
+
       }
     }
   });

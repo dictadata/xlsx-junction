@@ -28,7 +28,7 @@ module.exports = exports = async function (options) {
 
     // *** stream some data to the codifier
     logger.info(">>> create streams");
-    var reader = j1.getReadStream({max_read: (options.source.options && options.source.options.max_read) || 100 });
+    var reader = j1.createReadStream({max_read: (options.source.options && options.source.options.max_read) || 100 });
     var codify = j1.getCodifyWriter(options.codify || null);
 
     logger.info(">>> start pipe");
