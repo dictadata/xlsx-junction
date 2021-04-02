@@ -4,7 +4,7 @@
 "use strict";
 
 const { StorageWriter, StorageError } = require('@dictadata/storage-junctions');
-const logger = require("../logger");
+const { logger } = require("@dictadata/storage-junctions").utils;
 
 const XLSX = require('xlsx');
 const XlsxSheets = require('./xlsx-sheets');
@@ -18,21 +18,31 @@ module.exports = exports = class XlsxWriter extends StorageWriter {
    */
   constructor(storageJunction, options) {
     super(storageJunction, options);
+
+    this.workbook = storageJunction.workbook;
+    this.sheetName = storageJunction.sheetName;
+
     this.constructs = [];
   }
 
   async _write(construct, encoding, callback) {
     logger.debug("XlsxWriter._write");
     logger.debug(JSON.stringify(construct));
+    // check for empty construct
+    if (Object.keys(construct).length === 0) {
+      callback();
+      return;
+    }
 
     try {
-      // save construct to .schema
+      // collect constructs in memory
+      this._count(1);
       this.constructs.push(construct);
 
       callback();
     }
     catch (err) {
-      logger.error(err.message);
+      logger.error(err);
       callback(err);
     }
 
@@ -57,36 +67,35 @@ module.exports = exports = class XlsxWriter extends StorageWriter {
     }
   }
 
-  _final(callback) {
+  async _final(callback) {
     logger.debug("XlsxWriter._final");
-    let options = this.options;
 
     try {
-      let filepath = this.engram.smt.locus;
-      let sheetName = (options.xlsx && options.xlsx.sheetName) || this.engram.smt.schema || "Sheet1"
+      var worksheet = {};
+      if (this.options.cells) {
+        for (let construct of this.constructs)
+          worksheet[construct.address] = construct.cell;
+      }
+      else {
+        // create new sheet for data
+        worksheet = XlsxSheets.json_to_sheet(this.constructs, this.json_to_sheet);
+      }
 
-      logger.debug("save file " + filepath)
+      if (this.workbook.SheetNames.indexOf(this.sheetName) >= 0)
+        this.workbook.Sheets[this.sheetName] = worksheet;
+      else
+        XLSX.utils.book_append_sheet(this.workbook, worksheet, this.sheetName);
+      this.junction.wbModified = true;
 
-      var workbook = XLSX.utils.book_new();
-
-      let s_opts = Object.assign({cellDates : true}, (options.xlsx && options.xlsx.sheet));
-      // ["cellDates", "origin", "header", "dateNF", "skipHeader"]);
-      var worksheet = XlsxSheets.json_to_sheet(this.constructs, s_opts);
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-      let f_opts = Object.assign({cellDates: true}, (options.xlsx && options.xlsx.workbook));
-      //  ["cellDates", "type", "bookSST", "bookType", "sheet", "compression", "Props", "themeXLSX", "ignoreEC"]);
-      XLSX.writeFile(workbook, filepath, f_opts );
-
-      // close connection, cleanup resources, ...
-      this.constructs = [];
+      // cleanup resources
+      //this.constructs = [];
+      this._count(null);
+      callback();
     }
-    catch(err) {
-      logger.error(err.message);
-      callback(new StorageError({statusCode: 500, _error: err}, 'Error storing construct'));
+    catch (err) {
+      logger.error(err);
+      callback(new StorageError({ statusCode: 500, _error: err }, 'Error writer._final'));
     }
-    callback();
   }
 
 };

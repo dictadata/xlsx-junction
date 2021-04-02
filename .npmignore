@@ -1,14 +1,8 @@
 dist/
-node_modules/
 output/
-test/unit/coverage
-test/e2e/reports
-test/output
 
 logs/
 *.log
-npm-debug.log*
-selenium-debug.log
 
 # Editor directories and files
 *.suo
@@ -16,3 +10,4 @@ selenium-debug.log
 *.njsproj
 *.sln
 .vscode/settings.json
+.vscode/tasks.json

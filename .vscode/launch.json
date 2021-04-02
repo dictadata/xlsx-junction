@@ -7,10 +7,8 @@
     {
       "type": "pwa-node",
       "request": "launch",
-      "name": "Run Test",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run-script", "test"],
-      "skipFiles": ["<node_internals>/**"],
+      "name": "xlsx list",
+      "program": "${workspaceFolder}/test/xlsx/list.js",
       "outputCapture": "std",
       "env": {
         "NODE_ENV": "development",
@@ -20,8 +18,8 @@
     {
       "type": "pwa-node",
       "request": "launch",
-      "name": "xlsx encoding",
-      "program": "${workspaceFolder}/test/xlsx/encoding.js",
+      "name": "xlsx codify",
+      "program": "${workspaceFolder}/test/xlsx/codify.js",
       "outputCapture": "std",
       "env": {
         "NODE_ENV": "development",
@@ -42,41 +40,8 @@
     {
       "type": "pwa-node",
       "request": "launch",
-      "name": "xlsx store",
-      "program": "${workspaceFolder}/test/xlsx/store.js",
-      "outputCapture": "std",
-      "env": {
-        "NODE_ENV": "development",
-        "LOG_LEVEL": "verbose"
-      }
-    },
-    {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "xlsx recall",
-      "program": "${workspaceFolder}/test/xlsx/recall.js",
-      "outputCapture": "std",
-      "env": {
-        "NODE_ENV": "development",
-        "LOG_LEVEL": "verbose"
-      }
-    },
-    {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "xlsx retrieve",
-      "program": "${workspaceFolder}/test/xlsx/retrieve.js",
-      "outputCapture": "std",
-      "env": {
-        "NODE_ENV": "development",
-        "LOG_LEVEL": "verbose"
-      }
-    },
-    {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "xlsx dull",
-      "program": "${workspaceFolder}/test/xlsx/dull.js",
+      "name": "xlsx transforms",
+      "program": "${workspaceFolder}/test/xlsx/transforms.js",
       "outputCapture": "std",
       "env": {
         "NODE_ENV": "development",

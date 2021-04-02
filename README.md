@@ -15,6 +15,8 @@ const storage = require("@dictadata/storage-junctions");
 
 const XlsxJunction = require("@dictadata/xlsx-junction");
 storage.use("xlsx", XlsxJunction);
+storage.use('xls', XlsxJunction);
+storage.use('ods', XlsxJunction);
 ```
 
 Then a junction can be created as needed in the app using a SMT definition.

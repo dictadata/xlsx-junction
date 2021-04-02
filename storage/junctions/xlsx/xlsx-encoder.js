@@ -37,10 +37,10 @@ exports.storageField = function (cell) {
     //size: 0,
     //default: null,
     //isNullable: true,
-    //isKey: false,
+    //keyOrdinal: 0,
 
     // add additional Xlsx fields
-    //_model_xlsx: {
+    //_xlsx: {
     //  w: cell.w,
     //  f: cell.f
     //}
@@ -57,9 +57,10 @@ exports.xlsxType = function (field) {
 
   switch (field.type) {
     case "integer":
-    case "float":
+    case "number":
       xlsxType = "n";  break;
     case "keyword":
+    case "string":
     case "text":
       xlsxType = "s";  break;
     case "date":

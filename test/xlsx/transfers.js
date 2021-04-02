@@ -3,84 +3,69 @@
  */
 "use strict";
 
-const storage = require("@dictadata/storage-junctions");
-const XlsxJunction = require("../../lib/xlsx");
-
-const transfer = require('../lib/_transfer');
-const logger = require('../logger');
+require("../register");
+const { logger } = require('@dictadata/storage-junctions').utils;
+const { transfer, dullSchema } = require('@dictadata/storage-junctions').tests;
 
 logger.info("=== Test: xlsx");
-
-console.log("--- adding XlsxJunction to storage cortex");
-storage.use("xlsx", XlsxJunction);
 
 
 async function tests() {
 
-  logger.info("=== read csv write xlsx");
-  await transfer({
-    source: {
-      smt: "csv|test/data/|foofile.csv|*",
+  logger.info("=== csv > xlsx");
+  if (await transfer({
+    origin: {
+      smt: "csv|./data/test/|foofile.csv|*",
       options: {
-
+        header: true
       }
     },
-    destination: {
-      smt: "xlsx|test/output/csv_foofile.xlsx|foo|*",
-      options: {
-
-      }
+    terminal: {
+      smt: "xlsx|./data/output/xlsx/foofile_csv.xlsx|foo|*",
+      options: {}
     }
-  });
+  })) return 1;
 
-  logger.info("=== read xlsx write csv");
-  await transfer({
-    source: {
-      smt: "xlsx|test/output/csv_foofile.xlsx|foo|*",
-      options: {
-
-      }
+  logger.info("=== xlsx > csv");
+  if (await transfer({
+    origin: {
+      smt: "xlsx|./data/test/foofile.xlsx|foo|*",
+      options: {}
     },
-    destination: {
-      smt: "csv|test/output/|xlsx_foofile.csv|*",
+    terminal: {
+      smt: "csv|./data/output/xlsx/|foofile.csv|*",
       options: {
-
+        header: true
       }
     }
-  });
+  })) return 1;
 
-  logger.info("=== read json write xlsx");
-  await transfer({
-    source: {
-      smt: "json|test/data/|foofile.json|*",
-      options: {
-
-      }
+  logger.info("=== json > xlsx");
+  if (await transfer({
+    origin: {
+      smt: "json|./data/test/|foofile.json|*",
+      options: {}
     },
-    destination: {
-      smt: "xlsx|test/output/json_foofile.xlsx|foo|*",
-      options: {
-
-      }
+    terminal: {
+      smt: "xlsx|./data/output/xlsx/foofile_json.xlsx|foo|*",
+      options: {}
     }
-  });
+  })) return 1;
 
-  logger.info("=== read xlsx write json");
-  await transfer({
-    source: {
-      smt: "xlsx|test/output/json_foofile.xlsx|foo|*",
-      options: {
-
-      }
+  logger.info("=== xls > json");
+  if (await transfer({
+    origin: {
+      smt: "xlsx|./data/test/foofile.xls|foo|*",
+      options: {}
     },
-    destination: {
-      smt: "json|test/output/|xlsx_foofile.json|*",
-      options: {
-
-      }
+    terminal: {
+      smt: "json|./data/output/xlsx/|foofile.json|*",
+      options: {}
     }
-  });
+  })) return 1;
 
 }
 
-tests();
+(async () => {
+  await tests();
+})();

@@ -20,8 +20,11 @@
   },
   "homepage": "https://github.com/dictadata/xlsx-junction#readme",
   "dependencies": {
-    "@dictadata/storage-junctions": "^1.2.6",
+    "@dictadata/storage-junctions": "^1.7.1",
     "xlsx": "^0.15.6",
     "yn": "^4.0.0"
+  },
+  "devDependencies": {
+    "colors": "^1.4.0"
   }
 }
