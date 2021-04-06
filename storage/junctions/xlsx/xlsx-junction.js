@@ -2,7 +2,7 @@
  * xlsx/junction
  */
 "use strict";
-const { StorageJunction, StorageResults, StorageError } = require("@dictadata/storage-junctions");
+const { StorageJunction, StorageResponse, StorageError } = require("@dictadata/storage-junctions");
 const { typeOf, logger } = require("@dictadata/storage-junctions").utils;
 
 const XlsxReader = require("./xlsx-reader");
@@ -110,7 +110,7 @@ class XlsxJunction extends StorageJunction {
       }
     }
 
-    return new StorageResults(0, null, list);
+    return new StorageResponse(0, null, list);
   }
 
   /**
@@ -135,7 +135,7 @@ class XlsxJunction extends StorageJunction {
         this.engram.encoding = encoding;
       }
 
-      return new StorageResults(0, null, this.engram.encoding, "encoding");
+      return new StorageResponse(0, null, this.engram.encoding, "encoding");
     }
     catch (err) {
       logger.error(err);
@@ -163,7 +163,7 @@ class XlsxJunction extends StorageJunction {
 
       this.engram.encoding = encoding;
 
-      return new StorageResults(0);    }
+      return new StorageResponse(0);    }
     catch (err) {
       logger.error(err);
       if (err instanceof StorageError)
@@ -185,7 +185,7 @@ class XlsxJunction extends StorageJunction {
 
     throw new StorageError(501);
 
-    //return new StorageResults(0);
+    //return new StorageResponse(0);
   }
 
   /**
@@ -211,7 +211,7 @@ class XlsxJunction extends StorageJunction {
       // update row
 
       // check if row was inserted
-      return new StorageResults(resultCode, null, rowsCount, "rowsCount");
+      return new StorageResponse(resultCode, null, rowsCount, "rowsCount");
     }
     catch (err) {
       logger.error(err);
@@ -240,7 +240,7 @@ class XlsxJunction extends StorageJunction {
       let resultCode = 501;
       let construct = {};
 
-      return new StorageResults(resultCode, null, construct);
+      return new StorageResponse(resultCode, null, construct);
     }
     catch (err) {
       logger.error(err);
@@ -268,7 +268,7 @@ class XlsxJunction extends StorageJunction {
       // scan rows in sheet
       // if match add to constructs
 
-      return new StorageResults(resultCode, null, constructs);
+      return new StorageResponse(resultCode, null, constructs);
     }
     catch (err) {
       logger.error(err);
@@ -303,7 +303,7 @@ class XlsxJunction extends StorageJunction {
 
       }
 
-      return new StorageResults(501);
+      return new StorageResponse(501);
     }
     catch (err) {
       logger.error(err);
