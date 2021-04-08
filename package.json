@@ -1,15 +1,16 @@
 {
   "name": "@dictadata/xlsx-junction",
-  "version": "0.5.2",
-  "description": "Storage junction for Excel .xlsx .xls access.",
-  "main": "index.js",
+  "version": "1.7.1",
+  "description": "dictadata.org Storage Junction for Excel .xlsx and .xls files.",
+  "main": "storage/index.js",
   "scripts": {
-    "test": "node --inspect-brk=9229 test/main.js"
+    "test": "testrunner"
   },
   "repository": "github:dictadata/xlsx-junction",
   "keywords": [
     "storage",
     "junction",
+    "Excel",
     "xlsx",
     "xls"
   ],
@@ -20,7 +21,7 @@
   },
   "homepage": "https://github.com/dictadata/xlsx-junction#readme",
   "dependencies": {
-    "@dictadata/storage-junctions": "^1.7.1",
+    "@dictadata/storage-junctions": "^1.7.3",
     "xlsx": "^0.15.6",
     "yn": "^4.0.0"
   },

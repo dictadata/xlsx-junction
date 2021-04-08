@@ -12,14 +12,14 @@ Register the junction when initializing the app.
 
 ```javascript
 const storage = require("@dictadata/storage-junctions");
-
 const XlsxJunction = require("@dictadata/xlsx-junction");
+
 storage.use("xlsx", XlsxJunction);
 storage.use('xls', XlsxJunction);
 storage.use('ods', XlsxJunction);
 ```
 
-Then a junction can be created as needed in the app using a SMT definition.
+Then a junction can be created as needed in the app using an SMT definition.
 
 ```javascript
 const storage = require("@dictadata/storage-junctions");
@@ -39,8 +39,9 @@ var junction = storage.activate({
 Supported filesystem are those built into the storage-junctions library.  Currently the supported filesystems types are:
 
 - file - local file system
+- ftp - FTP server
+- http - HTTP server
 - s3 - AWS S3 bucket
-- ftp - FTPS server address and port
 
 ## Project Dependencies
 ---
