@@ -6,7 +6,7 @@
   "scripts": {
     "test": "testrunner"
   },
-  "repository": "github:dictadata/xlsx-junction",
+  "repository": "gitlab:dictadata/js/xlsx-junction",
   "keywords": [
     "storage",
     "junction",
@@ -17,9 +17,9 @@
   "author": "Drew O. Letcher",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dictadata/xlsx-junction/issues"
+    "url": "https://gitlab.com/dictadata/js/xlsx-junction/issues"
   },
-  "homepage": "https://github.com/dictadata/xlsx-junction#readme",
+  "homepage": "https://gitlab.com/dictadata/js/xlsx-junction#readme",
   "dependencies": {
     "@dictadata/storage-junctions": "^1.7.3",
     "xlsx": "^0.15.6",
