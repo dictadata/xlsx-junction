@@ -18,6 +18,24 @@ const stream = require('stream/promises');
 
 class XlsxJunction extends StorageJunction {
 
+  // storage capabilities, sub-class must override
+  capabilities = {
+    filesystem: false, // storage source is filesystem
+    sql: false,        // storage source is SQL
+    keystore: false,   // supports key-value storage
+
+    encoding: false,   // get encoding from source
+    reader: true,     // stream reader
+    writer: true,     // stream writer
+    store: false,      // store/recall individual constructs
+    query: false,      // select/filter data at source
+    aggregate: false   // aggregate data at source
+  }
+
+  // assign stream constructor functions, sub-class must override
+  _readerClass = XlsxReader;
+  _writerClass = XlsxWriter;
+  
   /**
    *
    * @param {*} SMT 'xlsx|file:filepath|filename|key' or an Engram object
@@ -26,9 +44,6 @@ class XlsxJunction extends StorageJunction {
   constructor(SMT, options) {
     super(SMT, options);
     logger.debug("XlsxJunction");
-
-    this._readerClass = XlsxReader;
-    this._writerClass = XlsxWriter;
 
     this.filepath = this.smt.locus;
     this.workbook = null;
