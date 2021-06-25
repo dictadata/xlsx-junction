@@ -2,7 +2,7 @@
 "use strict";
 
 const { SSF, utils } = require('xlsx');
-const { hasOwnProperty } = require("@dictadata/storage-junctions").utils;
+const { hasOwnProperty } = require("@dictadata/storage-junctions/utils");
 
 const encode_cell = utils.encode_cell;
 const encode_col = utils.encode_col;

@@ -4,7 +4,7 @@
 "use strict";
 
 const { StorageWriter, StorageError } = require('@dictadata/storage-junctions');
-const { logger } = require("@dictadata/storage-junctions").utils;
+const { logger } = require("@dictadata/storage-junctions/utils");
 
 const XLSX = require('xlsx');
 const XlsxSheets = require('./xlsx-sheets');

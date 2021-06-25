@@ -3,7 +3,7 @@
  */
 "use strict";
 const { StorageJunction, StorageResponse, StorageError } = require("@dictadata/storage-junctions");
-const { typeOf, logger } = require("@dictadata/storage-junctions").utils;
+const { typeOf, logger } = require("@dictadata/storage-junctions/utils");
 
 const XlsxReader = require("./xlsx-reader");
 const XlsxWriter = require("./xlsx-writer");
@@ -142,7 +142,7 @@ class XlsxJunction extends StorageJunction {
         // could possibly read types from sheet,
         // but individual cells can have formats that differ from others in the column
         let options = Object.assign({ max_read: 100 }, this.options);
-        let reader = this.createReadStream(options);
+        let reader = this.createReader(options);
         let codify = this.createTransform('codify', options);
 
         await stream.pipeline(reader, codify);

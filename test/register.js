@@ -4,7 +4,7 @@
 "use strict";
 
 const storage = require("@dictadata/storage-junctions");
-const { logger } = require("@dictadata/storage-junctions").utils;
+const { logger } = require("@dictadata/storage-junctions/utils");
 
 const XlsxJunction = require("../storage/junctions/xlsx");
 
