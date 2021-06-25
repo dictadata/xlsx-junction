@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- version 1.8.0
+  - update to @dictadata/storage-junctions 1.8.0
 - version 1.7.3
   - improvements to REST junction and httpRequest for querystring and web form parameters
   - implement junction capabilities

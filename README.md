@@ -1,4 +1,4 @@
-# @dictadata/xlsx-junction
+# @dictadata/xlsx-junction 1.8.x
 
 A storage junction for Excel .xlsx and .xls files.
 
@@ -27,21 +27,27 @@ const storage = require("@dictadata/storage-junctions");
 var junction = storage.activate({
   smt: {
     model:"xlsx",
-    locus: "filesystem:folderpath",
-    schema: "filename",
-    key: "*"
+    locus: "file:folderpath/workbook.xlsx",
+    schema: "sheet name",
+    key: "column name"
   }
 });
 ```
+## Supported Methods
 
-## Supported filesystems
+- list() - list sheets
+- createSchema() - create a new sheet
+- dullSchema() - delete a sheet
+- getEncoding() - *use codify transform to generate schema encoding
+- createReader() - read rows from sheet
+- createWriter() - save constructs to sheet
+
+## Supported FileSystems
 
 Supported filesystem are those built into the storage-junctions library.  Currently the supported filesystems types are:
 
 - file - local file system
-- ftp - FTP server
-- http - HTTP server
-- s3 - AWS S3 bucket
+
 
 ## Project Dependencies
 ---
