@@ -1,4 +1,4 @@
-// junctions/xlsx
+// storage/junctions/xlsx
 
 const XlsxJunction = require("./xlsx-junction");
 

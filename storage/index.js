@@ -1,7 +1,6 @@
 /**
- * @dictadata/xlsx-junction
+ * @dictadata/storage
  */
-"use strict";
 
 var XlsxJunction = require("./junctions/xlsx");
 module.exports = exports = XlsxJunction;
