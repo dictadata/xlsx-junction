@@ -1,1 +1,1 @@
-del /S /Q data\output\*.*
+del /S /Q test\data\output\*.*
