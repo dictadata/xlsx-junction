@@ -14,19 +14,19 @@ async function tests() {
   logger.info("=== codify foofile.xlsx|foo");
   if (await codify({
     origin: {
-      smt: "xlsx|./data/test/foofile.xlsx|foo|*"
+      smt: "xlsx|./test/data/input/foofile.xlsx|foo|*"
     },
-    outputFile1: './data/output/xlsx/encoding_1.json',
-    outputFile2: './data/output/xlsx/encoding_2.json'
+    outputFile1: './test/data/output/xlsx/encoding_1.json',
+    outputFile2: './test/data/output/xlsx/encoding_2.json'
   })) return 1;
 
   logger.info("=== codify foofile.xls|foo");
   if (await codify({
     origin: {
-      smt: "xls|./data/test/foofile.xls|foo|*"
+      smt: "xls|./test/data/input/foofile.xls|foo|*"
     },
-    outputFile1: './data/output/xlsx/encoding_xls_1.json',
-    outputFile2: './data/output/xlsx/encoding_xls_2.json'
+    outputFile1: './test/data/output/xlsx/encoding_xls_1.json',
+    outputFile2: './test/data/output/xlsx/encoding_xls_2.json'
   })) return 1;
 
 }

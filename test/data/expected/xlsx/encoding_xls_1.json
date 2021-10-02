@@ -1,7 +1,7 @@
 {
   "smt": {
-    "model": "xlsx",
-    "locus": "./data/test/foofile.xlsx",
+    "model": "xls",
+    "locus": "./test/data/input/foofile.xls",
     "schema": "foo",
     "key": "*"
   },

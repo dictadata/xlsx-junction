@@ -14,13 +14,13 @@ async function tests() {
   logger.info("=== list xlsx sheets (forEach)");
   if (await list({
     origin: {
-      smt: "xlsx|./data/test/foofile.xlsx|*|*",
+      smt: "xlsx|./test/data/input/foofile.xlsx|*|*",
       options: {
         schema: "foo*"
       }
     },
     terminal: {
-      output: "./data/output/xlsx/list.json"
+      output: "./test/data/output/xlsx/list.json"
     }
   })) return 1;
 

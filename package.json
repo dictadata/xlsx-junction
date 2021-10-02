@@ -2,7 +2,7 @@
   "name": "@dictadata/xlsx-junction",
   "version": "1.8.0",
   "description": "dictadata.org Storage Junction for Excel .xlsx and .xls files.",
-  "main": "storage/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "testrunner"
   },
@@ -21,8 +21,8 @@
   },
   "homepage": "https://gitlab.com/dictadata/js/xlsx-junction#readme",
   "dependencies": {
-    "@dictadata/storage-junctions": "^1.8.0",
-    "xlsx": "^0.17.0",
+    "@dictadata/storage-junctions": "^1.8.4",
+    "xlsx": "^0.17.2",
     "yn": "^4.0.0"
   },
   "devDependencies": {

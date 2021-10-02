@@ -14,7 +14,7 @@ async function tests() {
   logger.verbose('=== xlsx > xlsx_transform_1.json');
   if (await transfer({
     origin: {
-      smt: "xlsx|./data/test/foofile.xlsx|foo|*",
+      smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {
         match: {
           "Bar": { "wc": "row*" }
@@ -23,14 +23,14 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./data/output/xlsx/|transform_1.json|*"
+      smt: "json|./test/data/output/xlsx/|transform_1.json|*"
     }
   })) return 1;
 
   logger.verbose('=== xlsx > xlsx_transform_2.json');
   if (await transfer({
     origin: {
-      smt: "xlsx|./data/test/foofile.xlsx|foo|*"
+      smt: "xlsx|./test/data/input/foofile.xlsx|foo|*"
     },
     transforms: {
       "filter": {
@@ -59,7 +59,7 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./data/output/xlsx/|transform_2.json|*"
+      smt: "json|./test/data/output/xlsx/|transform_2.json|*"
     }
   })) return 1;
 

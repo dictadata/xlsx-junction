@@ -15,13 +15,13 @@ async function tests() {
   logger.info("=== csv > xlsx");
   if (await transfer({
     origin: {
-      smt: "csv|./data/test/|foofile.csv|*",
+      smt: "csv|./test/data/input/|foofile.csv|*",
       options: {
         header: true
       }
     },
     terminal: {
-      smt: "xlsx|./data/output/xlsx/foofile_csv.xlsx|foo|*",
+      smt: "xlsx|./test/data/output/xlsx/foofile_csv.xlsx|foo|*",
       options: {}
     }
   })) return 1;
@@ -29,11 +29,11 @@ async function tests() {
   logger.info("=== xlsx > csv");
   if (await transfer({
     origin: {
-      smt: "xlsx|./data/test/foofile.xlsx|foo|*",
+      smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {}
     },
     terminal: {
-      smt: "csv|./data/output/xlsx/|foofile.csv|*",
+      smt: "csv|./test/data/output/xlsx/|foofile.csv|*",
       options: {
         header: true
       }
@@ -43,11 +43,11 @@ async function tests() {
   logger.info("=== json > xlsx");
   if (await transfer({
     origin: {
-      smt: "json|./data/test/|foofile.json|*",
+      smt: "json|./test/data/input/|foofile.json|*",
       options: {}
     },
     terminal: {
-      smt: "xlsx|./data/output/xlsx/foofile_json.xlsx|foo|*",
+      smt: "xlsx|./test/data/output/xlsx/foofile_json.xlsx|foo|*",
       options: {}
     }
   })) return 1;
@@ -55,11 +55,11 @@ async function tests() {
   logger.info("=== xls > json");
   if (await transfer({
     origin: {
-      smt: "xlsx|./data/test/foofile.xls|foo|*",
+      smt: "xlsx|./test/data/input/foofile.xls|foo|*",
       options: {}
     },
     terminal: {
-      smt: "json|./data/output/xlsx/|foofile.json|*",
+      smt: "json|./test/data/output/xlsx/|foofile.json|*",
       options: {}
     }
   })) return 1;

@@ -1,0 +1,37 @@
+{
+  "smt": {
+    "model": "xls",
+    "locus": "./test/data/input/foofile.xls",
+    "schema": "foo",
+    "key": "*"
+  },
+  "fields": {
+    "Foo": {
+      "name": "Foo",
+      "type": "keyword",
+      "size": 7
+    },
+    "Bar": {
+      "name": "Bar",
+      "type": "text",
+      "size": 13
+    },
+    "Baz": {
+      "name": "Baz",
+      "type": "integer"
+    },
+    "Fobe": {
+      "name": "Fobe",
+      "type": "number"
+    },
+    "Dt Test": {
+      "name": "Dt Test",
+      "type": "date"
+    },
+    "enabled": {
+      "name": "enabled",
+      "type": "boolean"
+    }
+  },
+  "_SMT": "any|*|*|*"
+}
