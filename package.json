@@ -1,31 +1,39 @@
 {
   "name": "@dictadata/xlsx-junction",
-  "version": "1.8.0",
-  "description": "dictadata.org Storage Junction for Excel .xlsx and .xls files.",
+  "version": "0.9.9",
+  "description": "dictadata Storage Junction for .xlsx, .xls and .ods files.",
+  "author": "Drew O. Letcher",
+  "keywords": [
+    "dictadata",
+    "storage",
+    "junction",
+    "parser",
+    "xlsx",
+    "xls",
+    "ods"
+  ],
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "test": "testrunner"
   },
-  "repository": "gitlab:dictadata/js/xlsx-junction",
-  "keywords": [
-    "storage",
-    "junction",
-    "Excel",
-    "xlsx",
-    "xls"
-  ],
-  "author": "Drew O. Letcher",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://gitlab.com/dictadata/js/xlsx-junction/issues"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dictadata/xlsx-junction.git"
   },
-  "homepage": "https://gitlab.com/dictadata/js/xlsx-junction#readme",
-  "dependencies": {
-    "@dictadata/storage-junctions": "^1.8.4",
-    "xlsx": "^0.17.2",
-    "yn": "^4.0.0"
+  "homepage": "https://github.com/dictadata/xlsx-junction#readme",
+  "bugs": {
+    "url": "https://github.com/dictadata/xlsx-junction/issues"
   },
   "devDependencies": {
     "colors": "^1.4.0"
+  },
+  "dependencies": {
+    "@dictadata/storage-junctions": "^0.9.103",
+    "xlsx": "^0.18.5"
   }
 }

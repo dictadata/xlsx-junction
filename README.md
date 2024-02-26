@@ -1,6 +1,6 @@
 # @dictadata/xlsx-junction 1.8.x
 
-A storage junction for Excel .xlsx and .xls files.
+A Storage Junction for Excel .xlsx and .xls files.
 
 ## Installation
 
@@ -11,20 +11,20 @@ npm i @dictadata/xlsx-junction
 Register the junction when initializing the app.
 
 ```javascript
-const storage = require("@dictadata/storage-junctions");
-const XlsxJunction = require("@dictadata/xlsx-junction");
+const { Storage } = require("@dictadata/storage-junctions");
+const { XlsxJunction } = require("@dictadata/xlsx-junction");
 
-storage.use("xlsx", XlsxJunction);
-storage.use('xls', XlsxJunction);
-storage.use('ods', XlsxJunction);
+Storage.Junctions.use("xlsx", XlsxJunction);
+Storage.Junctions.use('xls', XlsxJunction);
+Storage.Junctions.use('ods', XlsxJunction);
 ```
 
 Then a junction can be created as needed in the app using an SMT definition.
 
 ```javascript
-const storage = require("@dictadata/storage-junctions");
+const Storage = require("@dictadata/storage-junctions");
 
-var junction = storage.activate({
+var junction = Storage.activate({
   smt: {
     model:"xlsx",
     locus: "file:folderpath/workbook.xlsx",
@@ -46,7 +46,7 @@ var junction = storage.activate({
 
 Supported filesystem are those built into the storage-junctions library.  Currently the supported filesystems types are:
 
-- file - local file system
+- file: - local file system
 
 
 ## Project Dependencies
@@ -55,4 +55,3 @@ Supported filesystem are those built into the storage-junctions library.  Curren
 This storage-junction is powered by SheetsJS js-xlsx library.
 
 * [SheetJS js-xlsx Project](https://github.com/SheetJS/sheetjs)
-* [NodeJS Server Deployments](https://github.com/SheetJS/sheetjs/tree/548396f87db576bfe2b9d80724554e51211d44f9/demos/server)
