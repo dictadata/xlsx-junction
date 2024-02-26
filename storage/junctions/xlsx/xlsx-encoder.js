@@ -3,8 +3,6 @@
  */
 "use strict";
 
-const ynBoolean = require('yn');
-
 /**
  * convert a xlsx type to a storage type
  * returns an array with [storageType,size]

@@ -1,8 +1,6 @@
 // storage/junctions/xlsx
 
-const XlsxJunction = require("./xlsx-junction");
-
-module.exports = exports = XlsxJunction;
+exports.XlsxJunction = require("./xlsx-junction");
 exports.XlsxReader = require("./xlsx-reader");
 exports.XlsxWriter = require("./xlsx-writer");
 exports.XlsxEncoder = require("./xlsx-encoder");
