@@ -1,37 +1,38 @@
 {
+  "name": "*",
+  "type": "engram",
   "smt": {
-    "model": "xlsx",
-    "locus": "./test/data/input/foofile.xlsx",
-    "schema": "foo",
+    "model": "*",
+    "locus": "*",
+    "schema": "*",
     "key": "*"
   },
-  "fields": {
-    "Foo": {
+  "fields": [
+    {
       "name": "Foo",
       "type": "keyword",
       "size": 7
     },
-    "Bar": {
+    {
       "name": "Bar",
       "type": "text",
       "size": 13
     },
-    "Baz": {
+    {
       "name": "Baz",
       "type": "integer"
     },
-    "Fobe": {
+    {
       "name": "Fobe",
       "type": "number"
     },
-    "Dt Test": {
+    {
       "name": "Dt Test",
       "type": "date"
     },
-    "enabled": {
+    {
       "name": "enabled",
       "type": "boolean"
     }
-  },
-  "_SMT": "any|*|*|*"
+  ]
 }

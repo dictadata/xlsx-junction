@@ -3,11 +3,11 @@
  */
 "use strict";
 
-const storage = require("@dictadata/storage-junctions");
+const { Storage } = require("@dictadata/storage-junctions");
 const { logger } = require("@dictadata/storage-junctions/utils");
 
-const XlsxJunction = require("../storage/junctions/xlsx");
+const { XlsxJunction } = require("../storage/junctions/xlsx");
 
 logger.info("--- adding XlsxJunction to storage cortex");
-storage.use("xls", XlsxJunction);
-storage.use("xlsx", XlsxJunction);
+Storage.Junctions.use("xls", XlsxJunction);
+Storage.Junctions.use("xlsx", XlsxJunction);

@@ -32,8 +32,9 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*"
     },
-    transforms: {
-      "filter": {
+    transforms: [
+      {
+        "transform": "filter",
         "match": {
           "Bar": "row"
         },
@@ -41,23 +42,24 @@ async function tests() {
           "Baz": { "gt": 500 }
         }
       },
-      "select": {
-        "inject_before": {
+      {
+        "transform": "mutate",
+        "default": {
           "fie": "where's fum?"
         },
-        "inject_after": {
-          "fum": "here"
-        },
-        "fields": {
+        "map": {
           "Dt Test": "dt_date",
           "Foo": "foo",
           "Bar": "bar",
           "Baz": "baz",
           "Fobe": "fobe"
         },
-        "remove": ["fobe"],
+        "remove": [ "fobe" ],
+        "override": {
+          "fum": "here"
+        }
       }
-    },
+    ],
     terminal: {
       smt: "json|./test/data/output/xlsx/|transform_2.json|*"
     }
