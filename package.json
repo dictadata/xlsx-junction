@@ -1,6 +1,6 @@
 {
   "name": "@dictadata/xlsx-junction",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "dictadata Storage Junction for .xlsx, .xls and .ods files.",
   "author": "Drew O. Letcher",
   "keywords": [
@@ -33,7 +33,7 @@
     "colors": "^1.4.0"
   },
   "dependencies": {
-    "@dictadata/storage-junctions": "^0.9.103",
+    "@dictadata/storage-junctions": "^0.9.107",
     "xlsx": "^0.18.5"
   }
 }

@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- version 0.9.10
+  - updated: @dictadata/storage-junctions 0.9.107
 - version 0.9.9
   - updated: xlxs 0.18.5
   - updated: @dictadata/storage-junctions 0.9.103
