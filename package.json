@@ -30,10 +30,11 @@
     "url": "https://github.com/dictadata/xlsx-junction/issues"
   },
   "devDependencies": {
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "eslint": "^9.0.0"
   },
   "dependencies": {
-    "@dictadata/storage-junctions": "^0.9.107",
-    "xlsx": "^0.18.5"
+    "@dictadata/storage-junctions": "^0.9.111",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   }
 }

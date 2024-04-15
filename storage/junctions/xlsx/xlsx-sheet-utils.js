@@ -1,8 +1,13 @@
-// originally copied from XLSX.utils in SheetsJS js-xlsx project's xlsx.js file.
+/**
+ * storage/junctions/xlsx-junction/sheet-parser
+ *
+ * originally copied from XLSX.utils in SheetsJS js-xlsx project's xlsx.js file.
+ *
+ */
 "use strict";
 
+const { Readable } = require('fs:stream');
 const { SSF, utils } = require('xlsx');
-const { hasOwnProperty } = require("@dictadata/storage-junctions/utils");
 
 const encode_cell = utils.encode_cell;
 const encode_col = utils.encode_col;
@@ -125,7 +130,7 @@ function keys(o) {
   var o2 = [];
 
   for (var i = 0; i < ks.length; ++i)
-    if (hasOwnProperty(o, ks[i]))
+    if (Object.hasOwn(o, ks[i]))
       o2.push(ks[i]);
 
   return o2;
@@ -242,7 +247,7 @@ exports.json_to_sheet = function (js, opts) {
 function make_json_row(sheet, r, R, cols, header, hdr, dense, o) {
   var rr = encode_row(R);
   var defval = o.defval;
-  var raw = hasOwnProperty(o, "raw") ? o.raw : true;
+  var raw = Object.hasOwn(o, "raw") ? o.raw : true;
   var isempty = true;
   var row = (header === 1) ? [] : {};
 
@@ -282,7 +287,7 @@ function make_json_row(sheet, r, R, cols, header, hdr, dense, o) {
         case 'n':
           break;
         default:
-          throw new StorageError({ statusCode: 400 }, 'unrecognized type ' + val.t);
+          throw new StorageError(400, 'unrecognized type ' + val.t);
       }
       if (hdr[C] != null) {
         if (v == null) {
@@ -301,6 +306,15 @@ function make_json_row(sheet, r, R, cols, header, hdr, dense, o) {
   };
 }
 
+/**
+ *
+ * @param {Object} sheet
+ * @param {Object} opts
+ * @property {Number|String} range
+ * @property {Number|String} header
+ * @property {Boolean} blankrows
+ * @returns
+ */
 exports.sheet_to_json = function (sheet, opts) {
   if (sheet == null || sheet["!ref"] == null)
     return [];
@@ -392,8 +406,16 @@ exports.sheet_to_json = function (sheet, opts) {
   return out;
 }
 
-
-exports.write_json_stream = function (sheet, opts) {
+/**
+ *
+ * @param {Object} sheet
+ * @param {Object} opts
+ * @property {Number|String} range
+ * @property {Number|String} header
+ * @property {Boolean} blankrows
+ * @returns
+ */
+exports.sheet_json_reader = function (sheet, opts) {
   var stream = Readable({
     objectMode: true
   });

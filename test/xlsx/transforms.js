@@ -5,7 +5,7 @@
 
 require("../register");
 const { logger } = require('@dictadata/storage-junctions/utils');
-const { transfer, dullSchema } = require('@dictadata/storage-junctions/test');
+const { transfer } = require('@dictadata/storage-junctions/test');
 
 logger.info("=== Test: xlsx transforms");
 

@@ -1,7 +1,9 @@
 /**
  * xlsx/junction
+ *
  */
 "use strict";
+
 const { StorageJunction } = require("@dictadata/storage-junctions");
 const { StorageResults, StorageError } = require("@dictadata/storage-junctions/types");
 const { typeOf, logger } = require("@dictadata/storage-junctions/utils");
@@ -11,11 +13,10 @@ const XlsxWriter = require("./xlsx-writer");
 //const XlsxEncoder = require("./xlsx-encoder");
 
 const XLSX = require('xlsx');
-const XlsxSheets = require('./xlsx-sheets');
+//const XlsxSheets = XLSX.utils;
 
 const fs = require('fs');
 const stream = require('stream/promises');
-
 
 module.exports = exports = class XlsxJunction extends StorageJunction {
 
@@ -39,48 +40,50 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
   _writerClass = XlsxWriter;
 
   /**
+   * @param {String|Object} SMT 'xlsx|file:filename|sheetname|key' or an Engram object
+   * @param {Object} options
+   * @property {Boolean} raw - output all raw in worksheet with cell properties
+   * @property {String} range - A1-style range, e.g. "A3:M24"
+   * @property {Boolean} overwrite - overwrite/create workbook file
+   * @property {String} sheetName - sheet name to use instead of SMT.schema, default none, optional
+   * @property {Boolean} cellDates - default true
+   * @property {Boolean} cellNF - default true
+   * @property {Boolean} cellStyles - default true
    *
-   * @param {*} SMT 'xlsx|file:filepath|filename|key' or an Engram object
-   * @param {*} options
+   * XLSX.readFile()
+   * https://docs.sheetjs.com/docs/api/parse-options
+   *
+   * read workbook options:
+   *   "cellFormula", "cellHTML", "cellNF", "cellStyles", "cellText", "cellDates"
+   *
+   * XLSX.writeFile()
+   * https://docs.sheetjs.com/docs/api/write-options
+   *
+   * write workbook options:
+   *   "cellDates", "type", "bookSST", "bookType", "sheet", "compression", "Props", "themeXLSX", "ignoreEC"
    */
   constructor(SMT, options) {
     super(SMT, options);
     logger.debug("XlsxJunction");
 
     this.filepath = this.smt.locus;
+    this.sheetName = this.options.sheetName || this.engram.smt.schema || "Sheet1";
+
     this.workbook = null;
     this.wbModified = false;
 
-    this.sheetName = this.options.sheetName || this.engram.smt.schema || "Sheet1";
-
-    // read workbook options:
-    //   "cellFormula", "cellHTML", "cellNF", "cellStyles", "cellText", "cellDates"
-    if (this.options.cells)
-      this.options.readFile = Object.assign({ cellDates: true, cellNF: true, cellStyles: true }, this.options.readFile);
+    if (this.options.raw)
+      this.options = Object.assign({ cellDates: true, cellNF: true, cellStyles: true }, this.options);
     else
-      this.options.readFile = Object.assign({ cellDates: true }, this.options.readFile);
+      this.options = Object.assign({ cellDates: true }, this.options);
 
-    // write workbook options:
-    //   "cellDates", "type", "bookSST", "bookType", "sheet", "compression", "Props", "themeXLSX", "ignoreEC"
-    if (this.options.cells)
-      this.options.writeFile = Object.assign({ cellDates: true, cellNF: true, cellStyles: true }, this.options.writeFile);
-    else
-      this.options.writeFile = Object.assign({ cellDates: true }, this.options.writeFile);
-
-    // sheet_to_jason read options:
-    // "raw", "range", "header", "dateNF", "defval", "blankrows"
-    this.options.sheet_to_json = Object.assign({}, this.options.sheet_to_json);
-
-    // json_to_sheet write options:
-    //  "cellDates", "origin", "header", "dateNF", "skipHeader"
-    this.options.json_to_sheet = Object.assign({ cellDates: true }, this.options.json_to_sheet);
   }
 
   // initialize workbook
   async activate() {
     if (fs.existsSync(this.filepath) && !this.options.overwrite) {
       logger.debug("load workbook " + this.filepath);
-      this.workbook = XLSX.readFile(this.filepath, this.options.readFile);
+      this.workbook = XLSX.readFile(this.filepath, this.options);
     }
     else {
       logger.debug("new workbook");
@@ -96,7 +99,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     // save file
     if (this.wbModified) {
       logger.debug("save workbook");
-      XLSX.writeFile(this.workbook, this.filepath, this.options.writeFile);
+      XLSX.writeFile(this.workbook, this.filepath, this.options);
     }
   }
 
@@ -105,15 +108,18 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
   * The smt.schema or options.schema should contain a wildcard character *.
   * If options.forEach is defined it is called for each schema found.
   * Returns list of schemas found.
-  * @param {*} options - list options
+  * @param {Object} options - list options
+  * @property {String} schema - search term with optional wildcards
+  * @property {Function} forEach = function to call for each entry
   */
   async list(options) {
     logger.debug('XlsxJunction list');
-    options = Object.assign({}, options, this.options);
+    options = Object.assign({}, this.options, options);
 
     let match = options.schema || this.smt.schema || '*';
     let rx = '^' + match + '$';
     rx = rx.replace('.', '\\.');
+    rx = rx.replace('?', '.');
     rx = rx.replace('*', '.*');
     rx = new RegExp(rx);
 
@@ -142,7 +148,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
       if (!this.engram.isDefined) {
         // read some rows from sheet to infer data types
         // could possibly read types from sheet,
-        // but individual cells can have formats that differ from others in the column
+        // but individual raw can have formats that differ from others in the column
         let options = Object.assign({ max_read: 100 }, this.options);
         let reader = this.createReader(options);
         let codify = this.createTransform('codify', options);
@@ -156,22 +162,25 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     }
     catch (err) {
       logger.error(err);
-      if (err instanceof StorageError)
-        throw err;
-      else
-        throw new StorageError(500).inner(err);
+      throw this.StorageError(err);
     }
   }
 
   /**
    * Sets the encoding for the storage node.
    * Possibly sending the encoding definitions to the source.
-   * @param {*} encoding
+   * @param {Object} options
+   * @property {String} sheetName
+   * @property {Object} encoding
+   * @property {}
    */
-  async createSchema(options={}) {
+  async createSchema(options) {
     logger.debug("XlsxJunction createSchema");
 
     try {
+      options = Object.assign({}, this.options, options);
+      let schema = options.sheetName || options.schema || this.smt.schema;
+
       let encoding = options.encoding || this.engram.encoding;
 
       // possible steps
@@ -183,22 +192,20 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
       return new StorageResults(0);    }
     catch (err) {
       logger.error(err);
-      if (err instanceof StorageError)
-        throw err;
-      else
-        throw new StorageError(500).inner(err);
+      throw this.StorageError(err);
     }
   }
 
   /**
    * Dull a schema at the locus.
    * Junction implementations will translate to delete file, DROP TABLE, delete index, etc.
-   * @param {Object} options optional, options.schema name to use instead of junction's smt.schema
+   * @param {Object} options
+   * @property {String} sheetName name to use instead of junction's smt.schema
    */
   async dullSchema(options) {
     logger.debug('XlsxJunction dullSchema');
     options = Object.assign({}, this.options, options);
-    let schema = options.schema || this.smt.schema;
+    let schema = options.sheetName || options.schema || this.smt.schema;
 
     throw new StorageError(501);
 
@@ -213,9 +220,9 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     logger.debug("XlsxJunction store");
 
     if (this.engram.keyof === 'uid' || this.engram.keyof === 'key')
-      throw new StorageError({ statusCode: 400 }, "unique keys not supported");
+      throw new StorageError(400, "unique keys not supported");
     if (typeOf(construct) !== "object")
-      throw new StorageError({ statusCode: 400 }, "Invalid parameter: construct is not an object");
+      throw new StorageError(400, "Invalid parameter: construct is not an object");
 
     try {
       if (!this.engram.isDefined)
@@ -232,10 +239,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     }
     catch (err) {
       logger.error(err);
-      if (err instanceof StorageError)
-        throw err;
-      else
-        throw new StorageError(500).inner(err);
+      throw this.StorageError(err);
     }
   }
 
@@ -261,16 +265,14 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     }
     catch (err) {
       logger.error(err);
-      if (err instanceof StorageError)
-        throw err;
-      else
-        throw new StorageError(500).inner(err);
+      throw this.StorageError(err);
     }
   }
 
   /**
    *
-   * @param {*} options options.pattern
+   * @param {Object} options
+   * @property {Object} pattern
    */
   async retrieve(options) {
     logger.debug("XlsxJunction retrieve");
@@ -289,10 +291,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     }
     catch (err) {
       logger.error(err);
-      if (err instanceof StorageError)
-        throw err;
-      else
-        throw new StorageError(500).inner(err);
+      throw this.StorageError(err);
     }
   }
 
@@ -304,7 +303,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     if (!options) options = {};
 
     if (this.engram.keyof === 'uid' || this.engram.keyof === 'key')
-      throw new StorageError({ statusCode: 400 }, "unique keys not supported");
+      throw new StorageError(400, "unique keys not supported");
 
     try {
       if (!this.engram.isDefined)
@@ -324,10 +323,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     }
     catch (err) {
       logger.error(err);
-      if (err instanceof StorageError)
-        throw err;
-      else
-        throw new StorageError(500).inner(err);
+      throw this.StorageError(err);
     }
   }
 
