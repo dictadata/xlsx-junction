@@ -13,7 +13,6 @@ const XlsxWriter = require("./xlsx-writer");
 //const XlsxEncoder = require("./xlsx-encoder");
 
 const XLSX = require('xlsx');
-//const XlsxSheets = XLSX.utils;
 
 const fs = require('fs');
 const stream = require('stream/promises');
@@ -41,26 +40,19 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
   /**
    * @param {String|Object} SMT 'xlsx|file:filename|sheetname|key' or an Engram object
-   * @param {Object} options
-   * @property {Boolean} raw - output all raw in worksheet with cell properties
-   * @property {String} range - A1-style range, e.g. "A3:M24"
-   * @property {Boolean} overwrite - overwrite/create workbook file
-   * @property {String} sheetName - sheet name to use instead of SMT.schema, default none, optional
-   * @property {Boolean} cellDates - default true
-   * @property {Boolean} cellNF - default true
-   * @property {Boolean} cellStyles - default true
+   * @param {object} options
+   * @param {boolean} raw - output all raw in worksheet with cell properties
+   * @param {string} range - A1-style range, e.g. "A3:M24"
+   * @param {boolean} overwrite - overwrite/create workbook file
+   * @param {string} sheetName - sheet name to use instead of SMT.schema, default none, optional
+   * @param {boolean} cellDates - default true
    *
-   * XLSX.readFile()
+   * XLSX.readFile() options:
    * https://docs.sheetjs.com/docs/api/parse-options
    *
-   * read workbook options:
-   *   "cellFormula", "cellHTML", "cellNF", "cellStyles", "cellText", "cellDates"
-   *
-   * XLSX.writeFile()
+   * XLSX.writeFile() options:
    * https://docs.sheetjs.com/docs/api/write-options
    *
-   * write workbook options:
-   *   "cellDates", "type", "bookSST", "bookType", "sheet", "compression", "Props", "themeXLSX", "ignoreEC"
    */
   constructor(SMT, options) {
     super(SMT, options);
@@ -72,10 +64,15 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     this.workbook = null;
     this.wbModified = false;
 
-    if (this.options.raw)
-      this.options = Object.assign({ cellDates: true, cellNF: true, cellStyles: true }, this.options);
-    else
-      this.options = Object.assign({ cellDates: true }, this.options);
+    this.options = Object.assign({
+      raw: false,
+      cellFormula: false, // .f
+      cellHTML: false, // .h
+      cellNF: true, // .z Number (cell) Format
+      cellStyles: false, // .s
+      cellText: true,  // .w
+      cellDates: true // t:"d" and .v as UTC date string, instead of t:"n" and v. as number
+    }, this.options);
 
   }
 
@@ -108,9 +105,9 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
   * The smt.schema or options.schema should contain a wildcard character *.
   * If options.forEach is defined it is called for each schema found.
   * Returns list of schemas found.
-  * @param {Object} options - list options
-  * @property {String} schema - search term with optional wildcards
-  * @property {Function} forEach = function to call for each entry
+  * @param {object} options - list options
+  * @param {string} schema - search term with optional wildcards
+  * @param {Function} forEach = function to call for each entry
   */
   async list(options) {
     logger.debug('XlsxJunction list');
@@ -169,10 +166,10 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
   /**
    * Sets the encoding for the storage node.
    * Possibly sending the encoding definitions to the source.
-   * @param {Object} options
-   * @property {String} sheetName
-   * @property {Object} encoding
-   * @property {}
+   * @param {object} options
+   * @param {string} sheetName
+   * @param {object} encoding
+   * @param {}
    */
   async createSchema(options) {
     logger.debug("XlsxJunction createSchema");
@@ -189,7 +186,8 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
       this.engram.encoding = encoding;
 
-      return new StorageResults(0);    }
+      return new StorageResults(0);
+    }
     catch (err) {
       logger.error(err);
       throw this.StorageError(err);
@@ -199,8 +197,8 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
   /**
    * Dull a schema at the locus.
    * Junction implementations will translate to delete file, DROP TABLE, delete index, etc.
-   * @param {Object} options
-   * @property {String} sheetName name to use instead of junction's smt.schema
+   * @param {object} options
+   * @param {string} sheetName name to use instead of junction's smt.schema
    */
   async dullSchema(options) {
     logger.debug('XlsxJunction dullSchema');
@@ -271,8 +269,8 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
   /**
    *
-   * @param {Object} options
-   * @property {Object} pattern
+   * @param {object} options
+   * @param {object} pattern
    */
   async retrieve(options) {
     logger.debug("XlsxJunction retrieve");
