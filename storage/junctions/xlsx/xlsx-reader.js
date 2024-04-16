@@ -5,25 +5,32 @@
 "use strict";
 
 const { StorageReader } = require('@dictadata/storage-junctions');
+const { StorageError } = require('@dictadata/storage-junctions/types');
 const { logger } = require('@dictadata/storage-junctions/utils');
+const { pipeline } = require('node:stream/promises');
 
-const XLSX = require('xlsx');
-const XlsxDataParser = require('./xlsx-data-parser');
+const XlsxSheetReader = require('./xlsx-sheet-reader');
+const RowAsObjectTransform = require('./RowAsObjectTransform');
+const RepeatCellTransform = require('./RepeatCellTransform');
+const RepeatHeadingTransform = require('./RepeatHeadingTransform');
 
 module.exports = exports = class XlsxReader extends StorageReader {
 
   /**
-   * @param {Object} junction - parent XlsxJunction
-   * @param {Object} options
-   * @property {Number} max_read - maximum rows to read
-   * @property {Boolean} raw - output all raw in worksheet with cell properties
-   * @property {String} range - A1-style range, e.g. "A3:M24"
-   * @property {String} range A1-style range, e.g. "A3:M24"
-   * @property {String} heading PDF section heading where data is located, default: none
-   * @property {Integer} cells minimum number of cells in a row, default: 1
-   * @property {Integer} pageHeader height of page header area in rows, default: 0
-   * @property {Integer} pageFooter height of page footer area in rows, default: 0
-   * @property {Boolean} repeatingHeaders indicates if table headers are repeated on each page, default: false
+   * @param {object}   junction - parent XlsxJunction
+   * @param {object}   [options]
+   * @param {number}   [options.max_read] - maximum rows to read
+   * @param {boolean}  [options.raw] - output all raw in worksheet with cell properties
+   * @param {string}   [options.range] - A1-style range, e.g. "A3:M24"
+   * @param {string}   [options.heading] PDF section heading where data is located, default: none
+   * @param {string}   [options.stopHeading] PDF section heading after data table, default: none
+   * @param {number}   [options.cells] minimum number of cells in a row, default: 1
+   * @param {number}   [options.pageHeader] height of page header area in rows, default: 0
+   * @param {number}   [options.pageFooter] height of page footer area in rows, default: 0
+   * @param {boolean}  [options.repeating] indicates if table headers are repeated on each page, default: false
+   * @param {string[]} [options.headers] - RowAsObject: array of column names for data, default none, first table row contains names.
+   * @param {number}   [options.column] - RepeatCellTransform: column index of cell to repeat, default 0
+   * @param {string}   [options.header] - RepeatHeadingTransform: column name for the repeating heading field
    */
   constructor(junction, options) {
     super(junction, options);
@@ -32,43 +39,68 @@ module.exports = exports = class XlsxReader extends StorageReader {
     this.sheetName = junction.sheetName;
 
     this.worksheet;
-    this.parser;
     this.started = false;
+    this.pipes = [];
   }
 
   async _construct(callback) {
     logger.debug(JSON.stringify(this.workbook.SheetNames, null, 2));
 
-    var reader = this;
-    this.worksheet = this.workbook.Sheets[ this.sheetName ];
-
-    if (!this.worksheet) {
-      callback(this.junction.StorageError(404, "sheet not found: " + this.sheetName));
-      return;
-    }
-
-    let parser = this.parser = new XlsxDataParser(this.worksheet, this.options);
-
-    parser.on('data', (row) => {
-      var max = this.options.max_read ? Math.min(this.options.max_read, constructs.length) : constructs.length;
-
-      if (row) {
-        // add additional processing here
-
-        if (!reader.push(row)) {
-          //parser.pause();  // If push() returns false stop reading from source.
-        }
+    try {
+      this.worksheet = this.workbook.Sheets[ this.sheetName ];
+      if (!this.worksheet) {
+        callback(this.junction.StorageError(404, "sheet not found: " + this.sheetName));
+        return;
       }
 
-    });
+      let xlsxReader = new XlsxSheetReader(this.worksheet, this.options);
+      this.pipes.push(xlsxReader);
 
-    parser.on('end', () => {
-      reader.push(null);
-    });
+      if (Object.hasOwn(this.options, "RepeatCell.column") || Object.hasOwn(this.options, "column")) {
+        let transform = new RepeatCellTransform(this.options);
+        this.pipes.push(transform);
+      }
 
-    parser.on('error', function (err) {
-      throw this.junction.StorageError(err);
-    });
+      if (Object.hasOwn(this.options, "RepeatHeading.header") || Object.hasOwn(this.options, "header")) {
+        let transform = new RepeatHeadingTransform(this.options);
+        this.pipes.push(transform);
+      }
+
+      let rowAsObject = new RowAsObjectTransform(this.options);
+      this.pipes.push(rowAsObject);
+
+      var encoder = this.junction.createEncoder(this.options);
+
+      var reader = this;
+
+      rowAsObject.on('data', (row) => {
+        if (row) {
+          // use junction's encoder functions
+          let construct = encoder.cast(row);
+          construct = encoder.filter(construct);
+          construct = encoder.select(construct);
+          //logger.debug(JSON.stringify(construct));
+
+          // add additional processing here
+          if (!reader.push(construct)) {
+            //rowpause();  // If push() returns false stop reading from source.
+          }
+        }
+      });
+
+      rowAsObject.on('end', () => {
+        reader.push(null);
+      });
+
+      rowAsObject.on('error', function (err) {
+        throw new StorageError(err);
+      });
+
+    }
+    catch (err) {
+      logger.warn(err);
+      this.destroy(this.junction.StorageError(err));
+    }
 
     callback();
   }
@@ -88,13 +120,13 @@ module.exports = exports = class XlsxReader extends StorageReader {
           let construct = { address, cell };
           this.push(construct);
         }
+        // done reading from source
+        this.push(null);
       }
-      else {
-        this.parser.parse();
+      else if (!this.started) {
+        this.started = true;
+        pipeline(this.pipes);
       }
-
-      // done reading from source
-      this.push(null);
     }
     catch (err) {
       logger.warn(err);
