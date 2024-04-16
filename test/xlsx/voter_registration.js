@@ -17,26 +17,58 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
-        raw: true
+        raw: true,
+        cellDates: false
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|svr_all_rows.json|*",
-      options: {}
+      smt: "json|./test/data/output/xlsx/|svr_all_rows.json|*"
     }
   })) return 1;
 
-  logger.info("=== county");
+  logger.info("=== heading");
   if (await transfer({
     origin: {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
-        range: "A6:R74"
+        heading: "Active",
+        cells: 9,
+        column: 0
+      }
+    },
+    terminal: {
+      smt: "json|./test/data/output/xlsx/|svr_heading.json|*",
+      output: "./test/data/output/xlsx/svr_heading.json"
+    }
+  })) return 1;
+
+  logger.info("=== range");
+  if (await transfer({
+    origin: {
+      smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
+      options: {
+        range: "A6:R70",
+        column: 0
       }
     },
     terminal: {
       smt: "json|./test/data/output/xlsx/|svr_range.json|*",
-      options: {}
+      output: "./test/data/output/xlsx/svr_range.json"
+    }
+  })) return 1;
+
+  logger.info("=== repeat");
+  if (await transfer({
+    origin: {
+      smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
+      options: {
+        range: "A77:S134",
+        header: "County:1"
+      }
+    },
+    terminal: {
+      smt: "json|./test/data/output/xlsx/|svr_repeat.json|*",
+      output: "./test/data/output/xlsx/svr_repeat.json"
     }
   })) return 1;
 
