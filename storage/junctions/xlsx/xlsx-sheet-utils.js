@@ -308,11 +308,11 @@ function make_json_row(sheet, r, R, cols, header, hdr, dense, o) {
 
 /**
  *
- * @param {Object} sheet
- * @param {Object} opts
- * @property {Number|String} range
- * @property {Number|String} header
- * @property {Boolean} blankrows
+ * @param {object} sheet
+ * @param {object} opts
+ * @param {Number|String} range
+ * @param {Number|String} header
+ * @param {boolean} blankrows
  * @returns
  */
 exports.sheet_to_json = function (sheet, opts) {
@@ -408,11 +408,11 @@ exports.sheet_to_json = function (sheet, opts) {
 
 /**
  *
- * @param {Object} sheet
- * @param {Object} opts
- * @property {Number|String} range
- * @property {Number|String} header
- * @property {Boolean} blankrows
+ * @param {object} sheet
+ * @param {object} opts
+ * @param {Number|String} range
+ * @param {Number|String} header
+ * @param {boolean} blankrows
  * @returns
  */
 exports.sheet_json_reader = function (sheet, opts) {
