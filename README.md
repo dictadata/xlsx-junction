@@ -58,13 +58,11 @@ This storage-junction is powered by SheetsJS js-xlsx library.
 ```
 /**
  * @param {String|Object} SMT 'xlsx|file:filename|sheetname|key' or an Engram object
- * @param {Object} options
- * @property {Boolean} raw - output all raw in worksheet with cell properties
- * @property {Boolean} overwrite - overwrite/create workbook file
- * @property {String} sheetName - sheet name to use instead of SMT.schema
- * @property {Boolean} cellDates - default true
- * @property {Boolean} cellNF - default true
- * @property {Boolean} cellStyles - default true
+ * @param {object} options
+ * @param {boolean} raw - output all raw in worksheet with cell properties
+ * @param {boolean} overwrite - overwrite/create workbook file
+ * @param {string} sheetName - sheet name to use instead of SMT.schema
+ * @param {boolean} cellDates - default true
  *
  * XLSX.readFile()
  * read workbook options:
@@ -82,10 +80,10 @@ This storage-junction is powered by SheetsJS js-xlsx library.
 
 ```
 /**
- * @param {Object} junction - parent XlsxJunction
- * @param {Object} options
- * @property {Boolean} raw - output all raw in worksheet with cell properties
- * @property {Number} max_read - maximum rows to read
+ * @param {object} junction - parent XlsxJunction
+ * @param {object} options
+ * @param {boolean} raw - output all raw in worksheet with cell properties
+ * @param {number} max_read - maximum rows to read
  *
  * sheet_to_json() read options:
  *   "raw", "range", "header", "dateNF", "defval", "blankrows", "skipHidden", "UTC"
@@ -97,9 +95,9 @@ This storage-junction is powered by SheetsJS js-xlsx library.
 
 ```
 /**
- * @param {Object} junction - parent XlsxJunction
- * @param {Object} options
- * @property {Boolean} raw - output all raw in worksheet with cell properties
+ * @param {object} junction - parent XlsxJunction
+ * @param {object} options
+ * @param {boolean} raw - output all raw in worksheet with cell properties
  *
  * json_to_sheet() write options:
  *   "cellDates", "origin", "header", "dateNF", "skipHeader"
