@@ -1,0 +1,55 @@
+{
+  "name": "codify",
+  "type": "engram",
+  "smt": {
+    "model": "*",
+    "locus": "*",
+    "schema": "*",
+    "key": "*"
+  },
+  "fields": [
+    {
+      "name": "County",
+      "type": "text",
+      "size": 10
+    },
+    {
+      "name": "Precincts",
+      "type": "integer"
+    },
+    {
+      "name": "Date/Period",
+      "type": "text",
+      "size": 8
+    },
+    {
+      "name": "Democratic",
+      "type": "integer"
+    },
+    {
+      "name": "Green",
+      "type": "keyword",
+      "size": 1
+    },
+    {
+      "name": "Libertarian",
+      "type": "integer"
+    },
+    {
+      "name": "No Labels",
+      "type": "integer"
+    },
+    {
+      "name": "Republican",
+      "type": "integer"
+    },
+    {
+      "name": "Other",
+      "type": "integer"
+    },
+    {
+      "name": "Total",
+      "type": "integer"
+    }
+  ]
+}
