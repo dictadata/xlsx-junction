@@ -14,9 +14,9 @@ const XlsxSheets = XLSX.utils;
 module.exports = exports = class XlsxWriter extends StorageWriter {
 
   /**
-   * @param {Object} junction - parent XlsxJunction
-   * @param {Object} options
-   * @property {Boolean} raw - constructs are worksheet raw with cell properties
+   * @param {object} junction - parent XlsxJunction
+   * @param {object} options
+   * @param {boolean} raw - constructs are worksheet raw with cell properties
    *
    * json_to_sheet()
    * https://docs.sheetjs.com/docs/api/utilities/array#array-of-objects-input
