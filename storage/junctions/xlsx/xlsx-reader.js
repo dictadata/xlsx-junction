@@ -25,8 +25,6 @@ module.exports = exports = class XlsxReader extends StorageReader {
    * @param {string}   [options.heading] PDF section heading where data is located, default: none
    * @param {string}   [options.stopHeading] PDF section heading after data table, default: none
    * @param {number}   [options.cells] minimum number of cells in a row, default: 1
-   * @param {number}   [options.pageHeader] height of page header area in rows, default: 0
-   * @param {number}   [options.pageFooter] height of page footer area in rows, default: 0
    * @param {boolean}  [options.repeating] indicates if table headers are repeated on each page, default: false
    * @param {string[]} [options.headers] - RowAsObject: array of column names for data, default none, first table row contains names.
    * @param {number}   [options.column] - RepeatCellTransform: column index of cell to repeat, default 0

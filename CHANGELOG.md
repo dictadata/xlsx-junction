@@ -1,5 +1,12 @@
 # CHANGELOG
 
+- version 0.9.11
+  - refactor: us custom xlsx-sheet-reader using StorageJunctions type encoding
+  - feature: implement transforms RowAsObject, RepeatCell, RepeatHeading
+  - feature: new XlsxReader parsing options
+  - updated: README.md documentation
+  - updated: xlsx 0.20.2
+  - updated: @dictadata/storage-junctions 0.9.111
 - version 0.9.10
   - updated: @dictadata/storage-junctions 0.9.107
 - version 0.9.9

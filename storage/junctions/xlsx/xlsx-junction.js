@@ -40,12 +40,12 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
   /**
    * @param {String|Object} SMT 'xlsx|file:filename|sheetname|key' or an Engram object
-   * @param {object} options
-   * @param {boolean} raw - output all raw in worksheet with cell properties
-   * @param {string} range - A1-style range, e.g. "A3:M24"
-   * @param {boolean} overwrite - overwrite/create workbook file
-   * @param {string} sheetName - sheet name to use instead of SMT.schema, default none, optional
-   * @param {boolean} cellDates - default true
+   * @param {object}  options
+   * @param {boolean} [raw] - output all raw in worksheet with cell properties
+   * @param {string}  [range] - A1-style range, e.g. "A3:M24"
+   * @param {boolean} [overwrite] - overwrite/create workbook file
+   * @param {string}  [sheetName] - sheet name to use instead of SMT.schema, default none
+   * @param {boolean} [cellDates] - default true, format date cell values as UTC strings
    *
    * XLSX.readFile() options:
    * https://docs.sheetjs.com/docs/api/parse-options
