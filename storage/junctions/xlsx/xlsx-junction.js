@@ -6,7 +6,8 @@
 
 const { StorageJunction } = require("@dictadata/storage-junctions");
 const { StorageResults, StorageError } = require("@dictadata/storage-junctions/types");
-const { typeOf, logger } = require("@dictadata/storage-junctions/utils");
+const { logger } = require("@dictadata/lib");
+const { typeOf } = require("@dictadata/lib");
 
 const XlsxReader = require("./xlsx-reader");
 const XlsxWriter = require("./xlsx-writer");

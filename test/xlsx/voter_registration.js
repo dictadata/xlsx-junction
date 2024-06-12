@@ -5,7 +5,7 @@
 "use strict";
 
 require("../register");
-const { logger } = require('@dictadata/storage-junctions/utils');
+const { logger } = require('@dictadata/lib');
 const { transfer } = require('@dictadata/storage-junctions/test');
 
 logger.info("=== Test: voter_registration");

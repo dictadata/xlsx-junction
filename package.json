@@ -1,6 +1,6 @@
 {
   "name": "@dictadata/xlsx-junction",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "description": "dictadata Storage Junction for .xlsx, .xls and .ods files.",
   "author": "Drew O. Letcher",
   "keywords": [
@@ -34,7 +34,8 @@
     "eslint": "^9.0.0"
   },
   "dependencies": {
-    "@dictadata/storage-junctions": "^0.9.111",
+    "@dictadata/lib": "github:dictadata/lib#semver:1.0",
+    "@dictadata/storage-junctions": "^0.9.114",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   }
 }

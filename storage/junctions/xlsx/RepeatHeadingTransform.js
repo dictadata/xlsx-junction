@@ -4,7 +4,7 @@
 "use strict";
 
 const { Transform } = require('stream');
-const { logger } = require('@dictadata/storage-junctions/utils');
+const { logger } = require('@dictadata/lib');
 
 /**
  * Repeat a heading cell in following rows.

@@ -6,7 +6,7 @@
 
 const { StorageReader } = require('@dictadata/storage-junctions');
 const { StorageError } = require('@dictadata/storage-junctions/types');
-const { logger } = require('@dictadata/storage-junctions/utils');
+const { logger } = require('@dictadata/lib');
 const { pipeline } = require('node:stream/promises');
 
 const XlsxSheetReader = require('./xlsx-sheet-reader');
