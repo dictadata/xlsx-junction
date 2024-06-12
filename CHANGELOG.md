@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- version 0.9.12
+  - refactor: use utils modules from @dictadata/lib
+  - updated: @dictadata/storage-junctions 0.9.114
 - version 0.9.11
   - refactor: us custom xlsx-sheet-reader using StorageJunctions type encoding
   - feature: implement transforms RowAsObject, RepeatCell, RepeatHeading
@@ -12,6 +15,7 @@
 - version 0.9.9
   - updated: xlxs 0.18.5
   - updated: @dictadata/storage-junctions 0.9.103
+  - refactor: use version numbering for dictadata storage projects
 - version 1.8.0
   - update to @dictadata/storage-junctions 1.8.0
 - version 1.7.3
