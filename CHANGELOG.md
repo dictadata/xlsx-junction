@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- version 0.9.13
+  - refactor: reader/writer implement _stats and options.count
+  - updated: @dictadata/storage-junctions@0.9.118
 - version 0.9.12
   - refactor: use utils modules from @dictadata/lib
   - updated: @dictadata/storage-junctions 0.9.114
