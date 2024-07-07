@@ -19,7 +19,7 @@ module.exports = exports = class XlsxReader extends StorageReader {
   /**
    * @param {object}   junction - parent XlsxJunction
    * @param {object}   [options]
-   * @param {number}   [options.max_read] - maximum rows to read
+   * @param {number}   [options.count] - maximum rows to read
    * @param {boolean}  [options.raw] - output all raw in worksheet with cell properties
    * @param {string}   [options.range] - A1-style range, e.g. "A3:M24"
    * @param {string}   [options.heading] PDF section heading where data is located, default: none
@@ -70,6 +70,8 @@ module.exports = exports = class XlsxReader extends StorageReader {
       var encoder = this.junction.createEncoder(this.options);
 
       var reader = this;
+      var _stats = this._stats;
+      var count = this.options?.pattern?.count || this.options?.count || -1;
 
       rowAsObject.on('data', (row) => {
         if (row) {
@@ -79,9 +81,19 @@ module.exports = exports = class XlsxReader extends StorageReader {
           construct = encoder.select(construct);
           //logger.debug(JSON.stringify(construct));
 
-          // add additional processing here
-          if (!reader.push(construct)) {
-            //rowpause();  // If push() returns false stop reading from source.
+          if ((_stats.count + 1) % 10000 === 0) {
+            logger.verbose(_stats.count + " " + _stats.interval + "ms");
+          }
+
+          if (count > 0 && _stats.count > count) {
+            reader.push(null);
+            xlsxReader.destroy();
+          }
+          else if (construct) {
+            _stats.count += 1;
+            if (!reader.push(construct)) {
+              //rowpause();  // If push() returns false stop reading from source.
+            }
           }
         }
       });
