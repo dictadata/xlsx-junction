@@ -48,7 +48,7 @@ var junction = Storage.activate({
 - list() - list sheets
 - createSchema() - create a new sheet
 - dullSchema() - delete a sheet
-- getEncoding() - *use codify transform to generate schema encoding
+- getEngram() - *use codify transform to generate schema encoding
 - createReader() - read rows from sheet
 - createWriter() - save constructs to sheet
 
@@ -92,7 +92,7 @@ Supported filesystem are those built into the storage-junctions library.  Curren
 /**
  * @param {object} junction - parent XlsxJunction
  * @param {object}   [options]
- * @param {number}   [options.max_read] - maximum rows to read
+ * @param {number}   [options.count] - maximum rows to read
  * @param {boolean}  [options.raw] - output all raw in worksheet with cell properties
  * @param {string}   [options.range] - A1-style range, e.g. "A3:M24"
  * @param {string}   [options.heading] PDF section heading where data is located, default: none

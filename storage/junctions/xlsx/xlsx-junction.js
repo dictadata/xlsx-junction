@@ -138,7 +138,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
      *  Get the encoding for the storage node.
      *  Possibly make a call to the source to acquire the encoding definitions.
      */
-  async getEncoding() {
+  async getEngram() {
     logger.debug("XlsxJunction get encoding");
 
     try {
@@ -147,7 +147,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
         // read some rows from sheet to infer data types
         // could possibly read types from sheet,
         // but individual raw can have formats that differ from others in the column
-        let options = Object.assign({ max_read: 100 }, this.options);
+        let options = Object.assign({ count: 100 }, this.options);
         let reader = this.createReader(options);
         let codify = this.createTransform('codify', options);
 
@@ -225,7 +225,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
     try {
       if (!this.engram.isDefined)
-        await this.getEncoding();
+        await this.getEngram();
 
       // find row in sheet or append row
       let resultCode = 501;
@@ -253,7 +253,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
     try {
       if (!this.engram.isDefined)
-        await this.getEncoding();
+        await this.getEngram();
 
       // find row in sheet
       // build the construct
@@ -279,7 +279,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
     try {
       if (!this.engram.isDefined)
-        await this.getEncoding();
+        await this.getEngram();
 
       let resultCode = 501;
       let constructs = [];
@@ -306,7 +306,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
     try {
       if (!this.engram.isDefined)
-        await this.getEncoding();
+        await this.getEngram();
 
       let results = null;
       if (this.engram.keyof === 'primary' || this.engram.keyof === 'all') {
