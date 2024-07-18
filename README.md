@@ -24,7 +24,7 @@ Storage.Junctions.use('xls', XlsxJunction);
 Storage.Junctions.use('ods', XlsxJunction);
 ```
 
-## Creating an instance of PDFJunction
+## Creating an instance of XlsxJunction
 
 Create an instance of `XLSXJunction` class. Then a junction can be created as needed in the app using an SMT definition.
 
@@ -95,13 +95,9 @@ Supported filesystem are those built into the storage-junctions library.  Curren
  * @param {number}   [options.count] - maximum rows to read
  * @param {boolean}  [options.raw] - output all raw in worksheet with cell properties
  * @param {string}   [options.range] - A1-style range, e.g. "A3:M24"
- * @param {string}   [options.heading] PDF section heading where data is located, default: none
- * @param {string}   [options.stopHeading] PDF section heading after data table, default: none
- * @param {number}   [options.cells] minimum number of cells in a row, default: 1
- * @param {boolean}  [options.repeating] indicates if table headers are repeated on each page, default: false
- * @param {string[]} [options.headers] - RowAsObject: array of column names for data, default none, first table row contains names.
- * @param {number}   [options.column] - RepeatCellTransform: column index of cell to repeat, default 0
- * @param {string}   [options.header] - RepeatHeadingTransform: column name for the repeating heading field
+ * @param {string[]} [options.headers] - RowAsObject.headers: array of column names for data, default none, first table row contains names.
+ * @param {number}   [options.column]  - RepeatCellTransform.column: index of cell to repeat, default 0
+ * @param {string}   [options.header]  - RepeatHeadingTransform.header: column name for the repeating heading field
  *
  * sheet_to_json() read options:
  *   "raw", "range", "header", "dateNF", "defval", "blankrows", "skipHidden", "UTC"

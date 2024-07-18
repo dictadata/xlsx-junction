@@ -18,12 +18,6 @@ module.exports = class XlsxSheetReader extends Readable {
    * @param {object} worksheet XLSX worksheet object with cell properties
    * @param {object} [options]
    * @param {string} [options.range] A1-style range, e.g. "A3:M24"
-   * @param {string} [options.heading] PDF section heading where data is located, default: none
-   * @param {string} [options.stopHeading] PDF section heading after data table, default: none
-   * @param {number} [options.cells] minimum number of cells in a row, default: 1
-   * @param {number} [options.pageHeader] height of page header area in rows, default: 0
-   * @param {number} [options.pageFooter] height of page footer area in rows, default: 0
-   * @param {boolean} [options.repeatingHeaders] indicates if table headers are repeated on each page, default: false
    */
   constructor(worksheet, options = {}) {
     let streamOptions = {

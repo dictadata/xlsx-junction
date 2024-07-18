@@ -20,15 +20,10 @@ module.exports = exports = class XlsxReader extends StorageReader {
    * @param {object}   junction - parent XlsxJunction
    * @param {object}   [options]
    * @param {number}   [options.count] - maximum rows to read
-   * @param {boolean}  [options.raw] - output all raw in worksheet with cell properties
-   * @param {string}   [options.range] - A1-style range, e.g. "A3:M24"
-   * @param {string}   [options.heading] PDF section heading where data is located, default: none
-   * @param {string}   [options.stopHeading] PDF section heading after data table, default: none
-   * @param {number}   [options.cells] minimum number of cells in a row, default: 1
-   * @param {boolean}  [options.repeating] indicates if table headers are repeated on each page, default: false
-   * @param {string[]} [options.headers] - RowAsObject: array of column names for data, default none, first table row contains names.
-   * @param {number}   [options.column] - RepeatCellTransform: column index of cell to repeat, default 0
-   * @param {string}   [options.header] - RepeatHeadingTransform: column name for the repeating heading field
+   * @param {boolean}  [options.raw]   - output all raw in worksheet with cell properties
+   * @param {string[]} [options.headers] - RowAsObject.headers: array of column names for data, default none, first table row contains names.
+   * @param {number}   [options.column]  - RepeatCellTransform.column: column index of cell to repeat, default 0
+   * @param {string}   [options.header]  - RepeatHeadingTransform.header: column name for the repeating heading field
    */
   constructor(junction, options) {
     super(junction, options);
