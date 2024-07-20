@@ -15,9 +15,13 @@ module.exports = class XlsxSheetReader extends Readable {
 
   /**
    *
-   * @param {object} worksheet XLSX worksheet object with cell properties
-   * @param {object} [options]
-   * @param {string} [options.range] A1-style range, e.g. "A3:M24"
+   * @param {object}  worksheet XLSX worksheet object with cell properties
+   * @param {object}  [options]
+   * @param {string}  [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
+   * @param {string}  [options.heading]     - PDF section heading or text before data table, default: none
+   * @param {string}  [options.stopHeading] - PDF section heading or text after data table, default: none
+   * @param {integer} [options.cells]       - minimum cells in a row to include in output
+   * @param {boolean} [options.repeating]   - indicates if table headers are repeated on each page, default: false
    */
   constructor(worksheet, options = {}) {
     let streamOptions = {
@@ -81,38 +85,27 @@ module.exports = class XlsxSheetReader extends Readable {
     return addr;
   }
 
+  /**
+   * determines if a1 is above-left of or equal to a2
+   * @param {*} a1
+   * @param {*} a2
+   * @returns
+   */
   compareAddress(a1, a2) {
-    if (a1.row.length < a2.row.length)
-      return -1;
-    if (a1.row.length > a2.row.length)
-      return 1;
-    if (a1.row < a2.row)
-      return -1;
-    if (a1.row > a2.row)
-      return 1;
-
-    if (a1.column.length < a2.column.length)
-      return -1;
-    if (a1.column.length > a2.column.length)
-      return 1;
-    if (a1.column < a2.column)
-      return -1;
-    if (a1.column > a2.column)
-      return 1;
-
-    return 0;
+    if (parseInt(a1.row) <= parseInt(a2.row) && a1.column <= a2.column)
+      return true;
+    else
+      return false;
   }
 
   inRange(address) {
     if (!this.topLeft)
+      return true;  // no range specified
+
+    if (this.compareAddress(this.topLeft, address) && this.compareAddress(address, this.bottomRight))
       return true;
-
-    if (this.compareAddress(address, this.topLeft) < 0)
+    else
       return false;
-    if (this.compareAddress(address, this.bottomRight) > 0)
-      return false;
-
-    return true;
   }
 
   /**
@@ -125,20 +118,21 @@ module.exports = class XlsxSheetReader extends Readable {
 
     let prevRowNum = "0";
     for (let [ a1_address, cell ] of Object.entries(this.worksheet)) {
+      if (this.tableDone)
+        break;
+
       if (a1_address[ 0 ] === '!')
         continue;
 
       let address = this.getAddress(a1_address);
       if (this.inRange(address)) {
+
         if (row.length > 0 && (address.row !== prevRowNum)) {
           if (this.filters(row))
             this.output(row);
           // start new row
           row = [];
         }
-
-        if (this.tableDone)
-          break;
 
         // add cell value to row
         // https://docs.sheetjs.com/docs/csf/cell#cell-types
@@ -255,6 +249,9 @@ module.exports = class XlsxSheetReader extends Readable {
     return true;
   }
 
+  _destroy() {
+    this.options.tableDone = true;
+  }
 
   /**
    * Fetch data from the underlying resource.
