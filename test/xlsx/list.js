@@ -11,7 +11,18 @@ logger.info("=== tests: xlsx list");
 
 async function tests() {
 
-  logger.info("=== list xlsx sheets (forEach)");
+  logger.info("=== list xlsx sheets");
+  if (await list({
+    origin: {
+      "smt": "xls|/var/dictadata/PA/currentvotestats.xls|*|*",
+      "options": {}
+    },
+    terminal: {
+      output: "./test/data/output/xlsx/list_pa_votestats.json"
+    }
+  })) return 1;
+
+  logger.info("=== list xlsx sheets");
   if (await list({
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|*|*",

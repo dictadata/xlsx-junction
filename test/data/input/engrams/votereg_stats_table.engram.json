@@ -1,0 +1,56 @@
+{
+  "realm": "www.pa.gov",
+  "name": "votereg_stats_table",
+  "type": "engram",
+  "description": "State of Pennsylvania Voter Registration Totals",
+  "footnote": "[www.pa.gov (${YYYY})](https://www.pa.gov/en/agencies/dos/resources/voting-and-elections-resources/voting-and-election-statistics.html)",
+  "tags": [
+    "PA",
+    "Pennsylvania",
+    "voter registration"
+  ],
+  "smt": {
+    "model": "*",
+    "locus": "*",
+    "schema": "votereg_stats_table",
+    "key": "*"
+  },
+  "fields": [
+    {
+      "name": "DistrictCode",
+      "type": "keyword"
+    },
+    {
+      "name": "CountyName",
+      "type": "keyword"
+    },
+    {
+      "name": "Democratic",
+      "type": "integer"
+    },
+    {
+      "name": "Republican",
+      "type": "integer"
+    },
+    {
+      "name": "Libertarian",
+      "type": "integer"
+    },
+    {
+      "name": "Green",
+      "type": "integer"
+    },
+    {
+      "name": "No Affiliation",
+      "type": "integer"
+    },
+    {
+      "name": "Other",
+      "type": "integer"
+    },
+    {
+      "name": "Total",
+      "type": "integer"
+    }
+  ]
+}

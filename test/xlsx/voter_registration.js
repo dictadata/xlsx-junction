@@ -72,6 +72,33 @@ async function tests() {
     }
   })) return 1;
 
+  logger.info("___ PA Table");
+  if (await transfer({
+    "origin": {
+      "smt": "xlsx|/var/dictadata/PA/current VoterRegStatsByCongressionalDistricts.xlsx|Table|*",
+      "options": {
+        "range": "A1:I125",
+        "column": 0
+      }
+    },
+    "transforms": [
+      {
+        "transform": "filter",
+        "drop": {
+          "CountyName": null
+        }
+      }
+    ],
+    "terminal": {
+      "smt": "csv|./test/data/output/xlsx/|stats_Table.csv|*",
+      "options": {
+        "header": true,
+        "encoding": "./test/data/input/engrams/votereg_stats_table.engram.json"
+      },
+      "output": "./test/data/output/xlsx/stats_Table.csv"
+    }
+  })) return 1;
+
 }
 
 (async () => {
