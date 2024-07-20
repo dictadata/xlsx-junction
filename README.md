@@ -67,12 +67,13 @@ Supported filesystem are those built into the storage-junctions library.  Curren
 ```javascript
 /**
  * @param {String|Object} SMT 'xlsx|file:filename|sheetname|key' or an Engram object
- * @param {object} options
- * @param {boolean} [raw] - output all raw in worksheet with cell properties
- * @param {string}  [range] - A1-style range, e.g. "A3:M24"
- * @param {boolean} [overwrite] - overwrite/create workbook file
- * @param {string}  [sheetName] - sheet name to use instead of SMT.schema, default none
- * @param {boolean} [cellDates] - default true, format date cell values as UTC strings
+ * @param {object}  [options]
+ * @param {boolean} [options.create]    - create workbook if it doesn't exist, default false
+ * @param {boolean} [options.save]      - save workbook if modified, default false
+ * @param {string}  [options.sheetName] - sheet name to use instead of SMT.schema, default none
+ * @param {string}  [options.range]     - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
+ * @param {boolean} [options.cellDates] - format date cell values as UTC strings, default true
+ * @param {boolean} [options.raw]       - read/write raw cell properties, default false
  *
  * XLSX.readFile()
  * read workbook options:
@@ -92,9 +93,13 @@ Supported filesystem are those built into the storage-junctions library.  Curren
 /**
  * @param {object} junction - parent XlsxJunction
  * @param {object}   [options]
- * @param {number}   [options.count] - maximum rows to read
- * @param {boolean}  [options.raw] - output all raw in worksheet with cell properties
- * @param {string}   [options.range] - A1-style range, e.g. "A3:M24"
+ * @param {number}   [options.count]       - maximum rows to read
+ * @param {string}   [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
+ * @param {string}   [options.heading]     - PDF section heading or text before data table, default: none
+ * @param {string}   [options.stopHeading] - PDF section heading or text after data table, default: none
+ * @param {integer}  [options.cells]       - minimum cells in a row to include in output
+ * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
+ * @param {boolean}  [options.raw]         - read raw cell properties, default false
  * @param {string[]} [options.headers] - RowAsObject.headers: array of column names for data, default none, first table row contains names.
  * @param {number}   [options.column]  - RepeatCellTransform.column: index of cell to repeat, default 0
  * @param {string}   [options.header]  - RepeatHeadingTransform.header: column name for the repeating heading field
@@ -111,7 +116,7 @@ Supported filesystem are those built into the storage-junctions library.  Curren
 /**
  * @param {object}  junction - parent XlsxJunction
  * @param {object}  [options]
- * @param {boolean} [raw] - constructs are worksheet cells with cell properties
+ * @param {boolean} [options.raw] - write raw cell properties, default false
  *
  * json_to_sheet() write options:
  *   "cellDates", "origin", "header", "dateNF", "skipHeader"

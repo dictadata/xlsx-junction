@@ -19,17 +19,22 @@ module.exports = exports = class XlsxReader extends StorageReader {
   /**
    * @param {object}   junction - parent XlsxJunction
    * @param {object}   [options]
-   * @param {number}   [options.count] - maximum rows to read
-   * @param {boolean}  [options.raw]   - output all raw in worksheet with cell properties
+   * @param {number}   [options.count]       - maximum rows to read
+   * @param {string}   [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
+   * @param {string}   [options.heading]     - PDF section heading or text before data table, default: none
+   * @param {string}   [options.stopHeading] - PDF section heading or text after data table, default: none
+   * @param {integer}  [options.cells]       - minimum cells in a row to include in output
+   * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
+   * @param {boolean}  [options.raw]         - read raw cell properties, default false
    * @param {string[]} [options.headers] - RowAsObject.headers: array of column names for data, default none, first table row contains names.
-   * @param {number}   [options.column]  - RepeatCellTransform.column: column index of cell to repeat, default 0
+   * @param {number}   [options.column]  - RepeatCellTransform.column: index of cell to repeat, default 0
    * @param {string}   [options.header]  - RepeatHeadingTransform.header: column name for the repeating heading field
    */
   constructor(junction, options) {
     super(junction, options);
 
     this.workbook = junction.workbook;
-    this.sheetName = junction.sheetName;
+    this.sheetName = options.sheetName || junction.sheetName;
 
     this.worksheet;
     this.started = false;
@@ -81,8 +86,8 @@ module.exports = exports = class XlsxReader extends StorageReader {
           }
 
           if (count > 0 && _stats.count > count) {
-            reader.push(null);
             xlsxReader.destroy();
+            reader.push(null);
           }
           else if (construct) {
             _stats.count += 1;

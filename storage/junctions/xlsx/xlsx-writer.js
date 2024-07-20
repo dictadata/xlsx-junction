@@ -16,7 +16,7 @@ module.exports = exports = class XlsxWriter extends StorageWriter {
   /**
    * @param {object}  junction - parent XlsxJunction
    * @param {object}  [options]
-   * @param {boolean} [raw] - constructs are worksheet cells with cell properties
+   * @param {boolean} [options.raw] - write raw cell properties, default false
    *
    * json_to_sheet()
    * https://docs.sheetjs.com/docs/api/utilities/array#array-of-objects-input
