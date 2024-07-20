@@ -16,7 +16,7 @@ const XlsxWriter = require("./xlsx-writer");
 const XLSX = require('xlsx');
 
 const fs = require('fs');
-const stream = require('stream/promises');
+const { finished } = require('node:stream/promises');
 
 module.exports = exports = class XlsxJunction extends StorageJunction {
 
@@ -41,12 +41,13 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
   /**
    * @param {String|Object} SMT 'xlsx|file:filename|sheetname|key' or an Engram object
-   * @param {object}  options
-   * @param {boolean} [options.raw] - output all raw in worksheet with cell properties
-   * @param {string}  [options.range] - A1-style range, e.g. "A3:M24"
-   * @param {boolean} [options.overwrite] - overwrite/create workbook file
+   * @param {object}  [options]
+   * @param {boolean} [options.create]    - create workbook if it doesn't exist, default false
+   * @param {boolean} [options.save]      - save workbook if modified, default false
    * @param {string}  [options.sheetName] - sheet name to use instead of SMT.schema, default none
+   * @param {string}  [options.range]     - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
    * @param {boolean} [options.cellDates] - default true, format date cell values as UTC strings
+   * @param {boolean} [options.raw]       - read/write raw cell properties, default false
    *
    * XLSX.readFile() options:
    * https://docs.sheetjs.com/docs/api/parse-options
@@ -75,17 +76,27 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
       cellDates: true // t:"d" and .v as UTC date string, instead of t:"n" and v. as number
     }, this.options);
 
+    if (options.encoding && !options.headers) {
+      let fields = options.encoding.fields || options.encoding;
+      this.options.headers = fields.reduce((accumulator, value) => {
+        accumulator.push(value.name);
+        return accumulator;
+      }, [])
+    }
   }
 
   // initialize workbook
   async activate() {
-    if (fs.existsSync(this.filepath) && !this.options.overwrite) {
+    if (fs.existsSync(this.filepath)) {
       logger.debug("load workbook " + this.filepath);
       this.workbook = XLSX.readFile(this.filepath, this.options);
     }
-    else {
+    else if (this.options.create) {
       logger.debug("new workbook");
       this.workbook = XLSX.utils.book_new();
+    }
+    else {
+      throw new StorageError(404, `File Not Found: ${this.filepath}`);
     }
 
     this._isActive = true;
@@ -95,7 +106,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     logger.debug("XlsxJunction relax");
 
     // save file
-    if (this.wbModified) {
+    if (this.options.save && this.wbModified) {
       logger.debug("save workbook");
       XLSX.writeFile(this.workbook, this.filepath, this.options);
     }
@@ -132,36 +143,6 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     }
 
     return new StorageResults(0, null, list);
-  }
-
-  /**
-     *  Get the encoding for the storage node.
-     *  Possibly make a call to the source to acquire the encoding definitions.
-     */
-  async getEngram() {
-    logger.debug("XlsxJunction get encoding");
-
-    try {
-      // fetch encoding form storage source
-      if (!this.engram.isDefined) {
-        // read some rows from sheet to infer data types
-        // could possibly read types from sheet,
-        // but individual raw can have formats that differ from others in the column
-        let options = Object.assign({ count: 100 }, this.options);
-        let reader = this.createReader(options);
-        let codify = this.createTransform('codify', options);
-
-        await stream.pipeline(reader, codify);
-        let encoding = codify.encoding;
-        this.engram.encoding = encoding;
-      }
-
-      return new StorageResults(0, null, this.engram.encoding, "encoding");
-    }
-    catch (err) {
-      logger.error(err);
-      throw this.StorageError(err);
-    }
   }
 
   /**
@@ -270,28 +251,26 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
   /**
    *
-   * @param {object} options
    * @param {object} pattern
    */
-  async retrieve(options) {
+  async retrieve(pattern) {
     logger.debug("XlsxJunction retrieve");
-    const pattern = options && (options.pattern || options || {});
+    let storageResults = new StorageResults("list");
+    let rs = this.createReader(pattern);
 
-    try {
-      if (!this.engram.isDefined)
-        await this.getEngram();
+    rs.on('data', (chunk) => {
+      storageResults.add(chunk);
+    })
+    rs.on('end', () => {
+      // console.log('There will be no more data.');
+    });
+    rs.on('error', (err) => {
+      storageResults = this.StorageError(err);
+    });
 
-      let resultCode = 501;
-      let constructs = [];
-      // scan rows in sheet
-      // if match add to constructs
+    await finished(rs);
 
-      return new StorageResults(resultCode, null, constructs);
-    }
-    catch (err) {
-      logger.error(err);
-      throw this.StorageError(err);
-    }
+    return storageResults;
   }
 
   /**
