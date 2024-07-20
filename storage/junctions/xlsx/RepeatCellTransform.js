@@ -37,11 +37,14 @@ module.exports = exports = class RepeatCellTransform extends Transform {
     if (row.length === this.prevLen - 1) {
       row.splice(0, 0, this.repeatValue);
     }
+    else if (row.length === this.prevLen && !row[ this.column ]) {
+      row[ this.column ] = this.repeatValue;
+    }
     else {
       this.repeatValue = row[ this.column ];
     }
-    this.prevLen = row.length;
 
+    this.prevLen = row.length;
     this.push(row);
     callback();
   }
