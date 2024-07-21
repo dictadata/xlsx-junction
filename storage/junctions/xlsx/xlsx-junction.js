@@ -5,7 +5,7 @@
 "use strict";
 
 const { Storage, StorageJunction } = require("@dictadata/storage-junctions");
-const { StorageResults, StorageError } = require("@dictadata/storage-junctions/types");
+const { Fields, StorageResults, StorageError } = require("@dictadata/storage-junctions/types");
 const { logger } = require("@dictadata/lib");
 const { typeOf } = require("@dictadata/lib");
 
@@ -76,8 +76,9 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
       cellDates: true // t:"d" and .v as UTC date string, instead of t:"n" and v. as number
     }, this.options);
 
+    // if encoding is supplied then use for headers
     if (options.encoding && !options.headers) {
-      let fields = options.encoding.fields || options.encoding;
+      let fields = Fields.Convert(options.encoding.fields || options.encoding);
       this.options.headers = fields.reduce((accumulator, value) => {
         accumulator.push(value.name);
         return accumulator;
