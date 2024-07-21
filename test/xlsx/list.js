@@ -14,6 +14,19 @@ async function tests() {
   logger.info("=== list xlsx sheets");
   if (await list({
     origin: {
+      smt: "xlsx|./test/data/input/foofile.xlsx|*|*",
+      options: {
+        schema: "foo*"
+      }
+    },
+    terminal: {
+      output: "./test/data/output/xlsx/list.json"
+    }
+  })) return 1;
+
+  logger.info("=== list PA sheets");
+  if (await list({
+    origin: {
       "smt": "xls|/var/dictadata/PA/currentvotestats.xls|*|*",
       "options": {}
     },
@@ -22,16 +35,14 @@ async function tests() {
     }
   })) return 1;
 
-  logger.info("=== list xlsx sheets");
+  logger.info("=== list FL sheets");
   if (await list({
     origin: {
-      smt: "xlsx|./test/data/input/foofile.xlsx|*|*",
-      options: {
-        schema: "foo*"
-      }
+      "smt": "xlsx|https://dos.fl.gov/media/707693/1-by-party-by-county.xlsx|*|*",
+      "options": {}
     },
     terminal: {
-      output: "./test/data/output/xlsx/list.json"
+      output: "./test/data/output/xlsx/list_party_by_county.json"
     }
   })) return 1;
 
