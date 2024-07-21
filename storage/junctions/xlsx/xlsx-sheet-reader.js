@@ -22,6 +22,7 @@ module.exports = class XlsxSheetReader extends Readable {
    * @param {string}  [options.stopHeading] - PDF section heading or text after data table, default: none
    * @param {integer} [options.cells]       - minimum cells in a row to include in output
    * @param {boolean} [options.repeating]   - indicates if table headers are repeated on each page, default: false
+   * @param {boolean} [options.trim]        - trim cell values, default true
    */
   constructor(worksheet, options = {}) {
     let streamOptions = {
@@ -137,7 +138,7 @@ module.exports = class XlsxSheetReader extends Readable {
         // add cell value to row
         // https://docs.sheetjs.com/docs/csf/cell#cell-types
         switch (cell.t) {
-          case "n":
+          case "n": // numeric code
             if (XLSX.SSF.is_date(cell.z))
               // date format, take the text version; cellDates: false
               row.push(cell.w)
@@ -145,9 +146,15 @@ module.exports = class XlsxSheetReader extends Readable {
               row.push(cell.v);
             break;
 
-          case "s":
+          case "s": // string text
+            if ((Object.hasOwn(this.options, "trim") ? this.options.trim : true))
+              row.push(cell.v.trim());
+            else
+              row.push(val);
+            break;
+
           case "d": // value converted to UTC string by Sheet.js; cellDates: true
-          case "b":
+          case "b": // boolean
             row.push(cell.v);
             break;
 
