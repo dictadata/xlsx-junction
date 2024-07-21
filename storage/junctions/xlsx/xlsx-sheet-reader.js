@@ -150,7 +150,7 @@ module.exports = class XlsxSheetReader extends Readable {
             if ((Object.hasOwn(this.options, "trim") ? this.options.trim : true))
               row.push(cell.v.trim());
             else
-              row.push(val);
+              row.push(cell.v);
             break;
 
           case "d": // value converted to UTC string by Sheet.js; cellDates: true
