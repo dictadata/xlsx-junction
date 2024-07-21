@@ -4,7 +4,7 @@
  */
 "use strict";
 
-const { StorageJunction } = require("@dictadata/storage-junctions");
+const { Storage, StorageJunction } = require("@dictadata/storage-junctions");
 const { StorageResults, StorageError } = require("@dictadata/storage-junctions/types");
 const { logger } = require("@dictadata/lib");
 const { typeOf } = require("@dictadata/lib");
@@ -15,8 +15,8 @@ const XlsxWriter = require("./xlsx-writer");
 
 const XLSX = require('xlsx');
 
-const fs = require('fs');
-const { finished } = require('node:stream/promises');
+const fs = require('node:fs');
+const { arrayBuffer } = require('node:stream/consumers');
 
 module.exports = exports = class XlsxJunction extends StorageJunction {
 
@@ -87,16 +87,26 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
 
   // initialize workbook
   async activate() {
-    if (fs.existsSync(this.filepath)) {
-      logger.debug("load workbook " + this.filepath);
-      this.workbook = XLSX.readFile(this.filepath, this.options);
-    }
-    else if (this.options.create) {
-      logger.debug("new workbook");
-      this.workbook = XLSX.utils.book_new();
+    let stfs = await Storage.activateFileSystem(this.smt, this.options);
+
+    if (stfs.fstype === "file") {
+      if (fs.existsSync(this.filepath)) {
+        logger.debug("load workbook " + this.filepath);
+        this.workbook = XLSX.readFile(this.filepath, this.options);
+      }
+      else if (this.options.create) {
+        logger.debug("new workbook");
+        this.workbook = XLSX.utils.book_new();
+      }
+      else {
+        throw new StorageError(404, `File Not Found: ${this.filepath}`);
+      }
     }
     else {
-      throw new StorageError(404, `File Not Found: ${this.filepath}`);
+      let rs = await stfs.createReadStream({ schema: "" });
+      let buff = await arrayBuffer(rs);
+      this.options.type = "buffer";
+      this.workbook = XLSX.read(buff, this.options);
     }
 
     this._isActive = true;
