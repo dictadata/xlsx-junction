@@ -12,6 +12,52 @@ logger.info("=== Test: voter_registration");
 
 async function tests() {
 
+  logger.info("=== FL CD");
+  if (await transfer({
+    "origin": {
+      "smt": "xlsx|https://dos.fl.gov/media/707700/5-party-by-congressional-district.xlsx|RegistrationByPartyDistUSR|*",
+        "options": {
+          "range": "A10:S110",
+          "trim": true,
+          "encoding": "./test/data/input/engrams/party_by_district.engram.json"
+        }
+    },
+    "terminal": {
+      "smt": "csv|./test/data/output/xlsx/|vreg_fl_cd.csv|*",
+      "options": {
+        "header": true
+      },
+      "output": "./test/data/output/xlsx/vreg_fl_cd.csv"
+    }
+  })) return 1;
+
+  logger.info("=== PA Table");
+  if (await transfer({
+    "origin": {
+      "smt": "xlsx|/var/dictadata/PA/current VoterRegStatsByCongressionalDistricts.xlsx|Table|*",
+      "options": {
+        "range": "A2:I125",
+        "column": 0,
+        "encoding": "./test/data/input/engrams/votereg_stats_table.engram.json"
+      }
+    },
+    "transforms": [
+      {
+        "transform": "filter",
+        "drop": {
+          "CountyName": null
+        }
+      }
+    ],
+    "terminal": {
+      "smt": "csv|./test/data/output/xlsx/|vreg_pa_stats.csv|*",
+      "options": {
+        "header": true
+      },
+      "output": "./test/data/output/xlsx/vreg_pa_stats.csv"
+    }
+  })) return 1;
+
   logger.info("=== all rows");
   if (await transfer({
     origin: {
@@ -22,7 +68,8 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|svr_all_rows.json|*"
+      smt: "json|./test/data/output/xlsx/|vreg_all_rows.json|*",
+      output: "./test/data/output/xlsx/vreg_all_rows.json"
     }
   })) return 1;
 
@@ -37,8 +84,8 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|svr_heading.json|*",
-      output: "./test/data/output/xlsx/svr_heading.json"
+      smt: "json|./test/data/output/xlsx/|vreg_heading.json|*",
+      output: "./test/data/output/xlsx/vreg_heading.json"
     }
   })) return 1;
 
@@ -52,8 +99,8 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|svr_range.json|*",
-      output: "./test/data/output/xlsx/svr_range.json"
+      smt: "json|./test/data/output/xlsx/|vreg_range.json|*",
+      output: "./test/data/output/xlsx/vreg_range.json"
     }
   })) return 1;
 
@@ -67,35 +114,8 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|svr_repeat.json|*",
-      output: "./test/data/output/xlsx/svr_repeat.json"
-    }
-  })) return 1;
-
-  logger.info("___ PA Table");
-  if (await transfer({
-    "origin": {
-      "smt": "xlsx|/var/dictadata/PA/current VoterRegStatsByCongressionalDistricts.xlsx|Table|*",
-      "options": {
-        "range": "A1:I125",
-        "column": 0
-      }
-    },
-    "transforms": [
-      {
-        "transform": "filter",
-        "drop": {
-          "CountyName": null
-        }
-      }
-    ],
-    "terminal": {
-      "smt": "csv|./test/data/output/xlsx/|stats_Table.csv|*",
-      "options": {
-        "header": true,
-        "encoding": "./test/data/input/engrams/votereg_stats_table.engram.json"
-      },
-      "output": "./test/data/output/xlsx/stats_Table.csv"
+      smt: "json|./test/data/output/xlsx/|vreg_repeat.json|*",
+      output: "./test/data/output/xlsx/vreg_repeat.json"
     }
   })) return 1;
 

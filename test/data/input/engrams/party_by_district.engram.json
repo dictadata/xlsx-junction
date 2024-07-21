@@ -1,0 +1,90 @@
+{
+  "domain": "dos.fl.gov",
+  "name": "party_by_district",
+  "type": "engram",
+  "smt": {
+    "model": "*",
+    "locus": "*",
+    "schema": "party_by_district",
+    "key": "*"
+  },
+  "fields": [
+    {
+      "name": "CountyName",
+      "type": "keyword",
+      "size": 25
+    },
+    {
+      "name": "Jurisdiction",
+      "type": "keyword"
+    },
+    {
+      "name": "Republican",
+      "type": "integer"
+    },
+    {
+      "name": "Democratic",
+      "type": "integer"
+    },
+    {
+      "name": "Boricua",
+      "type": "integer"
+    },
+    {
+      "name": "Coalition With A Purpose",
+      "type": "integer"
+    },
+    {
+      "name": "Conservative",
+      "type": "integer"
+    },
+    {
+      "name": "Constitution",
+      "type": "integer"
+    },
+    {
+      "name": "Ecology",
+      "type": "integer"
+    },
+    {
+      "name": "Forward",
+      "type": "integer"
+    },
+    {
+      "name": "Green",
+      "type": "integer"
+    },
+    {
+      "name": "Independent",
+      "type": "integer"
+    },
+    {
+      "name": "Libertarian",
+      "type": "integer"
+    },
+    {
+      "name": "No Labels",
+      "type": "integer"
+    },
+    {
+      "name": "Socialism & Liberation",
+      "type": "integer"
+    },
+    {
+      "name": "People's Party",
+      "type": "integer"
+    },
+    {
+      "name": "No Party Affiliation",
+      "type": "integer"
+    },
+    {
+      "name": "TOTAL",
+      "type": "integer"
+    },
+    {
+      "name": "Precincts",
+      "type": "integer"
+    }
+  ]
+}
