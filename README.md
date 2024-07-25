@@ -148,7 +148,7 @@ Examples use [Storage Tracts](https://github.com/dictadata/storage-tracts) CLI o
 }
 ```
 
-### Normalize a Missing Cell Value
+### Repeat a Column to Normalize Missing Heading Values
 
 ```javascript
 {

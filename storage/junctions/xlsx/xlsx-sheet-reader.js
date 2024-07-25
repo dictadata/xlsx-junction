@@ -43,13 +43,19 @@ module.exports = class XlsxSheetReader extends Readable {
     this.tableDone = false;
     this.headersRow;
 
+    let cells;
     if (Object.hasOwn(this.options, "range")) {
-      let cells = options.range.split(":");
-      if (cells.length > 0)
-        this.topLeft = this.getAddress(cells[ 0 ]);
-      if (cells.length > 1)
-        this.bottomRight = this.getAddress(cells[ 1 ]);
+      this.missingCells = Object.hasOwn(this.options, "missingCells") ? this.options.missingCells : true;
+      cells = options.range.split(":");
     }
+    else {
+      this.missingCells = this.options.missingCells || false;
+      cells = worksheet["!ref"].split(":");
+    }
+    if (cells.length > 0)
+      this.topLeft = this.getAddress(cells[ 0 ]);
+    if (cells.length > 1)
+      this.bottomRight = this.getAddress(cells[ 1 ]);
   }
 
   async _construct(callback) {
@@ -100,13 +106,47 @@ module.exports = class XlsxSheetReader extends Readable {
   }
 
   inRange(address) {
-    if (!this.topLeft)
+    if (!this.bottomRight)
       return true;  // no range specified
 
     if (this.compareAddress(this.topLeft, address) && this.compareAddress(address, this.bottomRight))
       return true;
     else
       return false;
+  }
+
+  ltCol(col1, col2) {
+    return (col1.length < col2.length || (col1.length === col2.length && col1 < col2));
+  }
+
+  lteCol(col1, col2) {
+    return (col1.length < col2.length || (col1.length === col2.length && col1 <= col2));
+  }
+
+  incCol(col) {
+    const Z = 90;
+    let chars = Array.from(col);
+
+    let rollover = false;
+    let i = chars.length - 1;
+    while (i >= 0) {
+      let c = chars[ i ].charCodeAt(0);
+      c++;
+      if (c <= Z) {
+        chars[ i ] = String.fromCharCode(c);
+        rollover = false;
+        break;
+      }
+      else {
+        chars[ i ] = 'A';
+        rollover = true;
+      }
+      --i;
+    }
+
+    if (rollover)
+      chars.push('A');
+    return chars.join("");
   }
 
   /**
@@ -117,22 +157,48 @@ module.exports = class XlsxSheetReader extends Readable {
     let row = [];
     this.count = 1;
 
-    let prevRowNum = "0";
+    let prevAddress = this.topLeft;
     for (let [ a1_address, cell ] of Object.entries(this.worksheet)) {
       if (this.tableDone)
         break;
 
-      if (a1_address[ 0 ] === '!')
+      if (a1_address[ 0 ] === '!') {
+        if (a1_address === "!ref") {
+
+        }
         continue;
+      }
 
       let address = this.getAddress(a1_address);
       if (this.inRange(address)) {
 
-        if (row.length > 0 && (address.row !== prevRowNum)) {
+        if (row.length > 0 && (address.row !== prevAddress.row)) {
+          if (this.missingCells) {
+            // insert missing cells at end of row
+            let col = this.incCol(prevAddress.column);
+            while (this.lteCol(col, this.bottomRight.column)) {
+              row.push(null);
+              col = this.incCol(col);
+            }
+          }
+
+          // done with this row
           if (this.filters(row))
             this.output(row);
+
           // start new row
           row = [];
+          prevAddress.row = address.row;
+          prevAddress.column = this.topLeft.column;
+        }
+
+        if (this.missingCells) {
+          // insert missing cells into row
+          let col = this.incCol(prevAddress.column);
+          while (this.ltCol(col, address.column)) {
+            row.push(null);
+            col = this.incCol(col);
+          }
         }
 
         // add cell value to row
@@ -165,7 +231,7 @@ module.exports = class XlsxSheetReader extends Readable {
             break;
         }
 
-        prevRowNum = address.row;
+        prevAddress = address;
       }
     }
 
