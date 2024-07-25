@@ -60,7 +60,7 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     super(SMT, options);
     logger.debug("XlsxJunction");
 
-    this.filepath = this.smt.locus;
+    this.filepath = this.smt.locus.startsWith("file:") ? this.smt.locus.substring(5) : this.smt.locus;;
     this.sheetName = this.options.sheetName || this.engram.smt.schema || "Sheet1";
 
     this.workbook = null;
