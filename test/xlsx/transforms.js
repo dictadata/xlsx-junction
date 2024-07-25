@@ -16,6 +16,7 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {
+        missingCells: true,
         match: {
           "Bar": { "wc": "row*" }
         },
@@ -23,14 +24,18 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|transform_1.json|*"
+      smt: "json|./test/data/output/xlsx/|transform_1.json|*",
+      output: "./test/data/output/xlsx/transform_1.json"
     }
   })) return 1;
 
   logger.verbose('=== xlsx > xlsx_transform_2.json');
   if (await transfer({
     origin: {
-      smt: "xlsx|./test/data/input/foofile.xlsx|foo|*"
+      smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
+      options: {
+        missingCells: true
+      }
     },
     transforms: [
       {
@@ -61,7 +66,8 @@ async function tests() {
       }
     ],
     terminal: {
-      smt: "json|./test/data/output/xlsx/|transform_2.json|*"
+      smt: "json|./test/data/output/xlsx/|transform_2.json|*",
+      output: "./test/data/output/xlsx/transform_2.json"
     }
   })) return 1;
 

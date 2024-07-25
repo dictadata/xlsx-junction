@@ -29,13 +29,16 @@ async function tests() {
   if (await transfer({
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
-      options: {}
+      options: {
+        missingCells: true
+      }
     },
     terminal: {
       smt: "csv|./test/data/output/xlsx/|foofile.csv|*",
       options: {
         header: true
-      }
+      },
+      output: "./test/data/output/xlsx/foofile.csv"
     }
   })) return 1;
 
@@ -55,11 +58,14 @@ async function tests() {
   if (await transfer({
     origin: {
       smt: "xlsx|./test/data/input/foofile.xls|foo|*",
-      options: {}
+      options: {
+        missingCells: true
+      }
     },
     terminal: {
       smt: "json|./test/data/output/xlsx/|foofile.json|*",
-      options: {}
+      options: {},
+      output: "./test/data/output/xlsx/foofile.json"
     }
   })) return 1;
 

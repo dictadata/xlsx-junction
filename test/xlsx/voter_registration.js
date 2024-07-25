@@ -68,8 +68,8 @@ async function tests() {
       }
     },
     terminal: {
-      smt: "json|./test/data/output/xlsx/|vreg_all_rows.json|*",
-      output: "./test/data/output/xlsx/vreg_all_rows.json"
+      smt: "json|./test/data/output/xlsx/|vreg_raw.json|*",
+      output: "./test/data/output/xlsx/vreg_raw.json"
     }
   })) return 1;
 
@@ -80,7 +80,8 @@ async function tests() {
       options: {
         heading: "Active",
         cells: 9,
-        column: 0
+        column: 0,
+        missingValue: "*"
       }
     },
     terminal: {
@@ -95,7 +96,9 @@ async function tests() {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
         range: "A6:R70",
-        column: 0
+        column: 0,
+        missingCells: false,
+        missingValue: "*"
       }
     },
     terminal: {
@@ -110,7 +113,9 @@ async function tests() {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
         range: "A77:S134",
-        header: "County:1"
+        header: "County:1",
+        missingCells: false,
+        missingValue: "*"
       }
     },
     terminal: {
