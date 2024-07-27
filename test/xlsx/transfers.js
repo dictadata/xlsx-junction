@@ -16,7 +16,7 @@ async function tests() {
     origin: {
       smt: "csv|./test/data/input/|foofile.csv|*",
       options: {
-        header: true
+        hasHeader: true
       }
     },
     terminal: {
@@ -30,13 +30,14 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {
+        hasHeader: true,
         missingCells: true
       }
     },
     terminal: {
       smt: "csv|./test/data/output/xlsx/|foofile.csv|*",
       options: {
-        header: true
+        addHeader: true
       },
       output: "./test/data/output/xlsx/foofile.csv"
     }
@@ -59,6 +60,7 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xls|foo|*",
       options: {
+        hasHeader: true,
         missingCells: true
       }
     },

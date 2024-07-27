@@ -16,6 +16,7 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {
+        hasHeader: true,
         missingCells: true
       }
     },
@@ -29,6 +30,7 @@ async function tests() {
     origin: {
       smt: "xls|./test/data/input/foofile.xls|foo|*",
       options: {
+        hasHeader: true,
         cellDates: true,
         missingCells: true
       }
@@ -43,10 +45,11 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
-        cellDates: false,
         heading: "Active",
         cells: 9,
-        column: 0
+        cellDates: false,
+        hasHeader: true,
+        "RepeatCell.column": 0
       }
     },
     terminal: {

@@ -18,6 +18,8 @@ async function tests() {
       "smt": "xlsx|https://dos.fl.gov/media/707700/5-party-by-congressional-district.xlsx|RegistrationByPartyDistUSR|*",
         "options": {
           "range": "A10:S110",
+          "hasHeader": false,
+          "missingCells": true,
           "trim": true,
           "encoding": "./test/data/input/engrams/party_by_district.engram.json"
         }
@@ -25,7 +27,7 @@ async function tests() {
     "terminal": {
       "smt": "csv|./test/data/output/xlsx/|vreg_fl_cd.csv|*",
       "options": {
-        "header": true
+        "addHeader": true
       },
       "output": "./test/data/output/xlsx/vreg_fl_cd.csv"
     }
@@ -37,7 +39,7 @@ async function tests() {
       "smt": "xlsx|/var/dictadata/PA/current VoterRegStatsByCongressionalDistricts.xlsx|Table|*",
       "options": {
         "range": "A2:I125",
-        "column": 0,
+        "RepeatCell.column": 0,
         "encoding": "./test/data/input/engrams/votereg_stats_table.engram.json"
       }
     },
@@ -52,7 +54,7 @@ async function tests() {
     "terminal": {
       "smt": "csv|./test/data/output/xlsx/|vreg_pa_stats.csv|*",
       "options": {
-        "header": true
+        "addHeader": true
       },
       "output": "./test/data/output/xlsx/vreg_pa_stats.csv"
     }
@@ -78,10 +80,11 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
+        hasHeader: true,
         heading: "Active",
         cells: 9,
-        column: 0,
-        missingValue: "*"
+        missingValue: "*",
+        "RepeatCell.column": 0
       }
     },
     terminal: {
@@ -96,7 +99,8 @@ async function tests() {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
         range: "A6:R70",
-        column: 0,
+        hasHeader: true,
+        "RepeatCell.column": 0,
         missingCells: false,
         missingValue: "*"
       }
@@ -113,9 +117,10 @@ async function tests() {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
         range: "A77:S134",
-        header: "County:1",
+        hasHeader: true,
         missingCells: false,
-        missingValue: "*"
+        missingValue: "*",
+        "RepeatHeading.header": "County:1:0"
       }
     },
     terminal: {

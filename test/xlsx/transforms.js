@@ -16,6 +16,7 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {
+        hasHeader: true,
         missingCells: true,
         match: {
           "Bar": { "wc": "row*" }
@@ -34,6 +35,7 @@ async function tests() {
     origin: {
       smt: "xlsx|./test/data/input/foofile.xlsx|foo|*",
       options: {
+        hasHeader: true,
         missingCells: true
       }
     },
