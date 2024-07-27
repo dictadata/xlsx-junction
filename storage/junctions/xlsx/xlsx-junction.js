@@ -27,8 +27,8 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
     keystore: false,   // supports key-value storage
 
     encoding: false,   // get encoding from source
-    reader: true,     // stream reader
-    writer: true,     // stream writer
+    reader: true,      // stream reader
+    writer: true,      // stream writer
     store: false,      // store/recall individual constructs
     query: false,      // select/filter data at source
     aggregate: false   // aggregate data at source
@@ -76,14 +76,6 @@ module.exports = exports = class XlsxJunction extends StorageJunction {
       cellDates: true // t:"d" and .v as UTC date string, instead of t:"n" and v. as number
     }, this.options);
 
-    // if encoding is supplied then use for headers
-    if (options.encoding && !options.headers) {
-      let fields = Fields.Convert(options.encoding.fields || options.encoding);
-      this.options.headers = fields.reduce((accumulator, value) => {
-        accumulator.push(value.name);
-        return accumulator;
-      }, [])
-    }
   }
 
   // initialize workbook

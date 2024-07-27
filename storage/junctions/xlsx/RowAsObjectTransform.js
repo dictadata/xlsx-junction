@@ -11,10 +11,10 @@ const { Transform } = require('stream');
 module.exports = exports = class RowAsObjectTransform extends Transform {
 
   /**
-   * If headers are not set in options then the first row seen is assumed to be the headers.
    *
-   * @param {object} options
-   * @param {Array} options.headers  array of column names for data, default none, first table row contains names.
+   * @param {object}  options
+   * @param {Boolean} options.hasHeader data has a header row
+   * @param {Array}   options.headers   array of field names for construct, default none, first table row contains names.
    */
   constructor(options = {}) {
     let streamOptions = {
@@ -23,7 +23,12 @@ module.exports = exports = class RowAsObjectTransform extends Transform {
     };
     super(streamOptions);
 
-    this.headers = options[ "RowAsObject.headers" ] || options.headers || undefined;
+    this.hasHeader = options.RowAsObject?.hasHeader || options[ "RowAsObject.hasheader" ] || options.hasHeader;
+    this.headers = options.RowAsObject?.headers || options[ "RowAsObject.headers" ] || options.headers;
+
+    this._headers; // internal header row from data
+    if (!Array.isArray(this.headers))
+      this.headers = [];
   }
 
   /**
@@ -33,21 +38,24 @@ module.exports = exports = class RowAsObjectTransform extends Transform {
    * @param {*} callback
    */
   _transform(row, encoding, callback) {
-    if (!this.headers) {
-      this.headers = row;
+    if (this.hasHeader && !this._headers) {
+      this._headers = row;
+      if (!this.headers?.length)
+        this.headers = row;
     }
     else {
       let obj = {};
       for (let i = 0; i < row.length; i++) {
-        let prop = (i < this.headers.length) ? this.headers[ i ] : i;
+        let prop = this.headers[ i ] || i;
         obj[ prop ] = row[ i ];
       }
       this.push(obj);
     }
     callback();
   }
-
+/*
   _flush(callback) {
     callback();
   }
+*/
 };

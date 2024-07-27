@@ -13,7 +13,7 @@ module.exports = exports = class RepeatCellTransform extends Transform {
   /**
    *
    * @param {object} options
-   * @param {number} options.column column index of cell to repeat, default 0
+   * @param {number} options.column row index of cell to repeat, default 0
    */
   constructor(options = {}) {
     let streamOptions = {
@@ -22,9 +22,10 @@ module.exports = exports = class RepeatCellTransform extends Transform {
     };
     super(streamOptions);
 
-    this.column = options["RepeatCell.column"] || options.column || 0;
-    this.prevLen = 0;
+    this.column = options.RepeatCell?.column || options[ "RepeatCell.column" ] || options.column || 0;
+
     this.repeatValue = "";
+    this.prevLen = 0;
   }
 
   /**

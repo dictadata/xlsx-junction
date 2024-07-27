@@ -26,12 +26,16 @@ module.exports = exports = class XlsxReader extends StorageReader {
    * @param {integer}  [options.cells]       - minimum cells in a row to include in output
    * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
    * @param {boolean}  [options.raw]         - read raw cell properties, default false
-   * @param {string[]} [options.headers] - RowAsObject.headers: array of column names for data, default none, first table row contains names.
-   * @param {number}   [options.column]  - RepeatCellTransform.column: index of cell to repeat, default 0
-   * @param {string}   [options.header]  - RepeatHeadingTransform.header: column name for the repeating heading field
+   * @param {boolean}  [options.hasHeader] - RowAsObject.hasHeader: data has a header row
+   * @param {string[]} [options.headers]   - RowAsObject.headers: array of column names for data, default none, first table row contains names.
+   * @param {number}   [options.column]    - RepeatCellTransform.column: column index in row of cell to repeat, default 0
+   * @param {string}   [options.header]    - RepeatHeadingTransform.header: field name to use for repeated heading, use suffix of :n to specify insert index (column)
    */
   constructor(junction, options) {
     super(junction, options);
+
+    if (!options.raw && !options.headers && options.encoding)
+      this.options.headers = this.engram.names;
 
     this.workbook = junction.workbook;
     this.sheetName = options.sheetName || junction.sheetName;
@@ -54,12 +58,12 @@ module.exports = exports = class XlsxReader extends StorageReader {
       let xlsxReader = new XlsxSheetReader(this.worksheet, this.options);
       this.pipes.push(xlsxReader);
 
-      if (Object.hasOwn(this.options, "RepeatCell.column") || Object.hasOwn(this.options, "column")) {
+      if ((this.options.RepeatCell && Object.hasOwn(this.options.RepeatCell, "column")) || Object.hasOwn(this.options, "RepeatCell.column") || Object.hasOwn(this.options, "column")) {
         let transform = new RepeatCellTransform(this.options);
         this.pipes.push(transform);
       }
 
-      if (Object.hasOwn(this.options, "RepeatHeading.header") || Object.hasOwn(this.options, "header")) {
+      if (this.options.RepeatHeading?.header || this.options["RepeatHeading.header"] || this.options.header) {
         let transform = new RepeatHeadingTransform(this.options);
         this.pipes.push(transform);
       }

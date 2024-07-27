@@ -35,27 +35,20 @@ module.exports = class XlsxSheetReader extends Readable {
 
     this.worksheet = worksheet;
     this.options = Object.assign({ cells: 1 }, options);
+    this.missingCells = options.missingCells;
+
+    let range = Object.hasOwn(this.options, "range") ? options.range.split(":") : worksheet["!ref"].split(":");
+    if (range.length > 0)
+      this.topLeft = this.getAddress(range[ 0 ]);
+    if (range.length > 1)
+      this.bottomRight = this.getAddress(range[ 1 ]);
 
     // parsing properties
     this.rows = []; // array of data values
     this.headingFound = Object.hasOwn(options, "heading") ? false : true;
     this.tableFound = this.headingFound;
     this.tableDone = false;
-    this.headersRow;
-
-    let cells;
-    if (Object.hasOwn(this.options, "range")) {
-      this.missingCells = Object.hasOwn(this.options, "missingCells") ? this.options.missingCells : true;
-      cells = options.range.split(":");
-    }
-    else {
-      this.missingCells = this.options.missingCells || false;
-      cells = worksheet["!ref"].split(":");
-    }
-    if (cells.length > 0)
-      this.topLeft = this.getAddress(cells[ 0 ]);
-    if (cells.length > 1)
-      this.bottomRight = this.getAddress(cells[ 1 ]);
+    this._headersRow;
   }
 
   async _construct(callback) {
@@ -261,10 +254,10 @@ module.exports = class XlsxSheetReader extends Readable {
 
     if (output && (this.options.repeatingHeaders || this.options.repeating)) {
       // skip repeating header rows
-      if (!this.headersRow)
-        this.headersRow = row;
+      if (!this._headersRow)
+        this._headersRow = row;
       else
-        output = !this.rowsEqual(this.headersRow, row);
+        output = !this.rowsEqual(this._headersRow, row);
     }
 
     return output;
