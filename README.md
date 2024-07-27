@@ -100,9 +100,10 @@ Supported filesystem are those built into the storage-junctions library.  Curren
  * @param {integer}  [options.cells]       - minimum cells in a row to include in output
  * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
  * @param {boolean}  [options.raw]         - read raw cell properties, default false
- * @param {string[]} [options.headers] - RowAsObject.headers: array of column names for data, default none, first table row contains names.
- * @param {number}   [options.column]  - RepeatCellTransform.column: index of cell to repeat, default 0
- * @param {string}   [options.header]  - RepeatHeadingTransform.header: column name for the repeating heading field
+ * @param {boolean}  [optiosn.hasHeader] - RowAsObject.hasHeader data has a header row
+ * @param {string[]} [options.headers]   - RowAsObject.headers: array of column names for data, default none, first table row contains names.
+ * @param {number}   [options.column]    - RepeatCell.column: column index in row of cell to repeat, default 0
+ * @param {string}   [options.header]    - RepeatHeadingTransform.header: field name to use for repeated heading, use suffix of :n to specify insert index (column)
  *
  * sheet_to_json() read options:
  *   "raw", "range", "header", "dateNF", "defval", "blankrows", "skipHidden", "UTC"
@@ -157,7 +158,7 @@ Examples use [Storage Tracts](https://github.com/dictadata/storage-tracts) CLI o
     options: {
       heading: "Active",
       cells: 9,
-      column: 0
+      "RepeatCell.column": 0
     }
   },
   terminal: {
@@ -176,7 +177,7 @@ Retrieves the same data table as previous example.
     smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
     options: {
       range: "A6:R70",
-      column: 0
+      "RepeatCell.column": 0
     }
   },
   terminal: {
