@@ -13,12 +13,11 @@ module.exports = exports = class RepeatCellTransform extends Transform {
   /**
    *
    * @param {object} options
-   * @param {number} options.column row index of cell to repeat, default 0
+   * @param {number} options.column column index in row to repeat, default 0
    */
   constructor(options = {}) {
     let streamOptions = {
-      writableObjectMode: true,
-      readableObjectMode: true
+      objectMode: true
     };
     super(streamOptions);
 
@@ -36,21 +35,26 @@ module.exports = exports = class RepeatCellTransform extends Transform {
    */
   _transform(row, encoding, callback) {
     if (row.length === this.prevLen - 1) {
-      row.splice(0, 0, this.repeatValue);
+      // missing cell
+      row.splice(this.column, 0, this.repeatValue);
     }
-    else if (row.length === this.prevLen && !row[ this.column ]) {
+    else if (row.length === this.prevLen && row[ this.column ] === "") {
+      // empty cell
       row[ this.column ] = this.repeatValue;
     }
-    else {
+    else if (row.length > this.column && row[ this.column ] !== "") {
+      // save value to repeat
+      this.prevLen = row.length;
       this.repeatValue = row[ this.column ];
     }
 
-    this.prevLen = row.length;
     this.push(row);
     callback();
   }
 
+  /*
   _flush(callback) {
     callback();
   }
+  */
 };

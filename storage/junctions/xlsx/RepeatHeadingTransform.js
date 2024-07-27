@@ -16,13 +16,13 @@ module.exports = exports = class RepeatHeadingTransform extends Transform {
 
   /**
    * Repeat a subheading cell in following rows.
-   * @param {object} options
-   * @param {string} options.header header name inserted into header row, use suffix :n:m to specify insert index in row.
+   * @param {object}  options
+   * @param {string}  options.header header name inserted into header row, use suffix :n:m to specify insert index in row.
+   * @param {boolean} options.hasHeader data has a header row, default true
    */
   constructor(options) {
     let streamOptions = {
-      writableObjectMode: true,
-      readableObjectMode: true
+      objectMode: true
     };
     super(streamOptions);
 
@@ -33,6 +33,15 @@ module.exports = exports = class RepeatHeadingTransform extends Transform {
     this.header = cols[ 0 ];
     this.headerIndex = (cols.length > 1) ? cols[ 1 ] : 0;
     this.dataIndex   = (cols.length > 2) ? cols[ 2 ] : (this.headerIndex || 0);
+
+    if (options.RepeatHeading && Object.hasOwn(options.RepeatHeading, "hasHeader"))
+      this.hasHeader = options.RepeatHeading.hasHeader;
+    else if (Object.hasOwn(options, "RepeatHeading.hasHeader"))
+      this.hasHeader = options[ "RepeatHeading.hasHeader" ];
+    else if (Object.hasOwn(options, "hasHeader"))
+      this.hasHeader = options.hasHeader;
+    else
+      this.hasHeader = true
 
     this.subheading = "";
     this.count = 0;
@@ -58,7 +67,7 @@ module.exports = exports = class RepeatHeadingTransform extends Transform {
       this.subheading = row[ 0 ];
     }
     else {
-      if (this.count === 1)
+      if (this.count === 1 && this.hasHeader)
         // insert header into headers row
         row.splice(this.headerIndex, 0, this.header);
       else

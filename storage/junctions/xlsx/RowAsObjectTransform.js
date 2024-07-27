@@ -18,17 +18,14 @@ module.exports = exports = class RowAsObjectTransform extends Transform {
    */
   constructor(options = {}) {
     let streamOptions = {
-      writableObjectMode: true,
-      readableObjectMode: true
+      objectMode: true
     };
     super(streamOptions);
 
     this.hasHeader = options.RowAsObject?.hasHeader || options[ "RowAsObject.hasheader" ] || options.hasHeader;
-    this.headers = options.RowAsObject?.headers || options[ "RowAsObject.headers" ] || options.headers;
+    this.headers = options.RowAsObject?.headers || options[ "RowAsObject.headers" ] || options.headers || [];
 
-    this._headers; // internal header row from data
-    if (!Array.isArray(this.headers))
-      this.headers = [];
+    this._headers; // internal header row
   }
 
   /**
@@ -53,6 +50,7 @@ module.exports = exports = class RowAsObjectTransform extends Transform {
     }
     callback();
   }
+
 /*
   _flush(callback) {
     callback();
