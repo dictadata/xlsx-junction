@@ -97,7 +97,7 @@ Supported filesystem are those built into the storage-junctions library.  Curren
  * @param {string}   [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
  * @param {string}   [options.heading]     - PDF section heading or text before data table, default: none
  * @param {string}   [options.stopHeading] - PDF section heading or text after data table, default: none
- * @param {integer}  [options.cells]       - minimum cells in a row to include in output
+ * @param {number|string} [options.cells]  - minimum number cells in a row for output, or "min-max" e.g. "7-9"
  * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
  * @param {boolean}  [options.raw]         - read raw cell properties, default false
  * @param {boolean}  [optiosn.hasHeader] - RowAsObject.hasHeader data has a header row
@@ -157,7 +157,7 @@ Examples use [Storage Tracts](https://github.com/dictadata/storage-tracts) CLI o
     smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
     options: {
       heading: "Active",
-      cells: 9,
+      cells: "9-10",
       "RepeatCell.column": 0
     }
   },

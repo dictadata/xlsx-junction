@@ -46,7 +46,7 @@ async function tests() {
       smt: "xlsx|./test/data/input/State_Voter_Registration_2024_PPE.xlsx|in|*",
       options: {
         heading: "Active",
-        cells: 9,
+        cells: "9-10",
         cellDates: false,
         hasHeader: true,
         "RepeatCell.column": 0

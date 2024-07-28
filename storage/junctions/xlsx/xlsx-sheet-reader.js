@@ -21,7 +21,7 @@ module.exports = class XlsxSheetReader extends Readable {
    * @param {string}  [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
    * @param {string}  [options.heading]     - PDF section heading or text before data table, default: none
    * @param {string}  [options.stopHeading] - PDF section heading or text after data table, default: none
-   * @param {number}  [options.cells]       - minimum number cells in a row for output, or "min-max" e.g. "7-9"
+   * @param {number|string} [options.cells] - minimum number cells in a row for output, or "min-max" e.g. "7-9"
    * @param {boolean} [options.repeating]   - indicates if table headers are repeated on each page, default: false
    * @param {boolean} [options.trim]        - trim cell values, default true
    */
@@ -35,7 +35,7 @@ module.exports = class XlsxSheetReader extends Readable {
     //super({ captureRejections: true });
 
     this.worksheet = worksheet;
-    this.options = Object.assign({ cells: 1 }, options);
+    this.options = Object.assign({}, options);
 
     let range = Object.hasOwn(this.options, "range") ? options.range.split(":") : worksheet[ "!ref" ].split(":");
     if (range.length > 0)
@@ -166,6 +166,10 @@ module.exports = class XlsxSheetReader extends Readable {
     return chars.join("");
   }
 
+  inCellRange(rowlen) {
+    return (rowlen >= this.cells.min && rowlen <= this.cells.max) || (rowlen === this.cells.heading);
+  }
+
   /**
    * Iterate the cells and determine rows.
    */
@@ -256,10 +260,6 @@ module.exports = class XlsxSheetReader extends Readable {
     if (this.filters(row)) {
       this.output(row);
     }
-  }
-
-  inCellRange(rowlen) {
-    return (rowlen >= this.cells.min && rowlen <= this.cells.max) || (rowlen === this.cells.heading);
   }
 
   /**

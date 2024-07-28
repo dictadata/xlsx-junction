@@ -47,13 +47,6 @@ module.exports = exports = class RepeatHeadingTransform extends Transform {
     this.count = 0;
   }
 
-  _construct(callback) {
-    if (this.options.cells)
-      logger.warn("options.cells is incompatible with RepeatHeading.header")
-
-    callback();
-  }
-
   /**
    * Internal call from streamWriter to process an object
    * @param {*} row
