@@ -193,8 +193,8 @@ module.exports = class XlsxSheetReader extends Readable {
       let address = this.getAddress(a1_address);
       if (this.inRange(address)) {
 
-        if (row.length > 0 && (address.row !== prevAddress.row)) {
-          if (this.missingCells) {
+        if (row.length >= 0 && (address.row !== prevAddress.row)) {
+          if (this.missingCells && row.length >= this.cells.min) {
             // insert missing cells at end of row
             let col = this.incCol(prevAddress.column);
             while (this.lteCol(col, this.bottomRight.column)) {

@@ -100,7 +100,7 @@ Supported filesystem are those built into the storage-junctions library.  Curren
  * @param {number|string} [options.cells]  - minimum number cells in a row for output, or "min-max" e.g. "7-9"
  * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
  * @param {boolean}  [options.raw]         - read raw cell properties, default false
- * @param {boolean}  [optiosn.hasHeader] - RowAsObject.hasHeader data has a header row
+ * @param {boolean}  [options.hasHeader] - RowAsObject.hasHeader data has a header row
  * @param {string[]} [options.headers]   - RowAsObject.headers: array of column names for data, default none, first table row contains names.
  * @param {number}   [options.column]    - RepeatCell.column: column index in row of cell to repeat, default 0
  * @param {string}   [options.header]    - RepeatHeadingTransform.header: field name to use for repeated heading, use suffix of :n to specify insert index (column)
