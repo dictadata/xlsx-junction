@@ -7,6 +7,7 @@
  */
 "use strict";
 
+const { contentTypeIsJSON } = require('@dictadata/lib');
 const { Readable } = require('node:stream');
 
 const XLSX = require('xlsx');
@@ -20,7 +21,7 @@ module.exports = class XlsxSheetReader extends Readable {
    * @param {string}  [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
    * @param {string}  [options.heading]     - PDF section heading or text before data table, default: none
    * @param {string}  [options.stopHeading] - PDF section heading or text after data table, default: none
-   * @param {integer} [options.cells]       - minimum cells in a row to include in output
+   * @param {number}  [options.cells]       - minimum number cells in a row for output, or "min-max" e.g. "7-9"
    * @param {boolean} [options.repeating]   - indicates if table headers are repeated on each page, default: false
    * @param {boolean} [options.trim]        - trim cell values, default true
    */
@@ -35,13 +36,36 @@ module.exports = class XlsxSheetReader extends Readable {
 
     this.worksheet = worksheet;
     this.options = Object.assign({ cells: 1 }, options);
-    this.missingCells = options.missingCells;
 
-    let range = Object.hasOwn(this.options, "range") ? options.range.split(":") : worksheet["!ref"].split(":");
+    let range = Object.hasOwn(this.options, "range") ? options.range.split(":") : worksheet[ "!ref" ].split(":");
     if (range.length > 0)
       this.topLeft = this.getAddress(range[ 0 ]);
     if (range.length > 1)
       this.bottomRight = this.getAddress(range[ 1 ]);
+
+    this.missingCells = options.missingCells;
+
+    this.cells = {
+      min: 1,
+      max: 256,
+      heading: 0  // RepeatHeading
+    };
+    if (options.cells) {
+      if (typeof options.cells === "number") {
+        this.cells.min = options.cells;
+      }
+      else if (typeof options.cells === "string") {
+        let minmax = options.cells.split("-")
+        if (minmax.length > 1)
+          this.cells.min = parseInt(minmax[ 0 ]);
+        if (minmax.length > 2)
+          this.cells.max = parseInt(minmax[ 1 ]);
+      }
+    }
+
+    let header = options.RepeatHeading?.header || options[ "RepeatHeading.header" ] || options.header;
+    if (header)
+      this.cells.heading = 1;
 
     // parsing properties
     this.rows = []; // array of data values
@@ -234,6 +258,10 @@ module.exports = class XlsxSheetReader extends Readable {
     }
   }
 
+  inCellRange(rowlen) {
+    return (rowlen >= this.cells.min && rowlen <= this.cells.max) || (rowlen === this.cells.heading);
+  }
+
   /**
    * Performs row filtering.
    *
@@ -244,13 +272,13 @@ module.exports = class XlsxSheetReader extends Readable {
       this.headingFound = this.compareHeading(row, this.options.heading);
     }
     else if (!this.tableFound) {
-      this.tableFound = row.length >= this.options.cells;
+      this.tableFound = this.inCellRange(row.length);
     }
     else if (this.options.heading && !this.tableDone) {
-      this.tableDone = (row.length < this.options.cells) || this.compareHeading(row, this.options.stopHeading);
+      this.tableDone = !this.inCellRange(row.length) || this.compareHeading(row, this.options.stopHeading);
     }
 
-    let output = this.headingFound && this.tableFound && !this.tableDone && row.length >= this.options.cells;
+    let output = this.headingFound && this.tableFound && !this.tableDone && this.inCellRange(row.length);
 
     if (output && (this.options.repeatingHeaders || this.options.repeating)) {
       // skip repeating header rows

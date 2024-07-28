@@ -23,7 +23,7 @@ module.exports = exports = class XlsxReader extends StorageReader {
    * @param {string}   [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
    * @param {string}   [options.heading]     - PDF section heading or text before data table, default: none
    * @param {string}   [options.stopHeading] - PDF section heading or text after data table, default: none
-   * @param {integer}  [options.cells]       - minimum cells in a row to include in output
+   * @param {integer|string} [options.cells] - minimum number cells in a row for output, or "min-max" e.g. "7-9"
    * @param {boolean}  [options.repeating]   - indicates if table headers are repeated on each page, default: false
    * @param {boolean}  [options.raw]         - read raw cell properties, default false
    * @param {boolean}  [options.hasHeader] - RowAsObject.hasHeader: data has a header row
