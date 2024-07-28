@@ -28,7 +28,7 @@ module.exports = class XlsxSheetReader extends Readable {
   constructor(worksheet, options = {}) {
     let streamOptions = {
       objectMode: true,
-      highWaterMark: 64,
+      highWaterMark: 32,
       autoDestroy: false
     };
     super(streamOptions);
