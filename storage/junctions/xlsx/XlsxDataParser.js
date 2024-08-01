@@ -1,5 +1,5 @@
 /**
- * storage/junctions/xlsx-data-parser
+ * storage/junctions/xlsx-sheet-reader
  *
  * Iterates worksheet cells groups the cells into rows.
  *
@@ -7,37 +7,31 @@
  */
 "use strict";
 
-const { contentTypeIsJSON } = require('@dictadata/lib');
-const { Readable } = require('node:stream');
+const EventEmitter = require('node:events');
 
 const XLSX = require('xlsx');
 
-module.exports = class XlsxSheetReader extends Readable {
+module.exports = class XlsxDataParser extends EventEmitter {
 
   /**
    *
+   * @param {object}  options
    * @param {object}  worksheet XLSX worksheet object with cell properties
-   * @param {object}  [options]
    * @param {string}  [options.range]       - data selection, A1-style range, e.g. "A3:M24", default all rows/columns
+   * @param {number|string} [options.cells] - minimum number cells in a row for output, or "min-max" e.g. "7-9"
+   * @param {boolean}  [options.missingCells] insert null values for missing cells
    * @param {string}  [options.heading]     - PDF section heading or text before data table, default: none
    * @param {string}  [options.stopHeading] - PDF section heading or text after data table, default: none
-   * @param {number|string} [options.cells] - minimum number cells in a row for output, or "min-max" e.g. "7-9"
    * @param {boolean} [options.repeating]   - indicates if table headers are repeated on each page, default: false
    * @param {boolean} [options.trim]        - trim cell values, default true
    */
-  constructor(worksheet, options = {}) {
-    let streamOptions = {
-      objectMode: true,
-      highWaterMark: 32,
-      autoDestroy: false
-    };
-    super(streamOptions);
-    //super({ captureRejections: true });
+  constructor(options = {}) {
+    super({ captureRejections: true });
 
-    this.worksheet = worksheet;
+    this.worksheet = options.worksheet;
     this.options = Object.assign({}, options);
 
-    let range = Object.hasOwn(this.options, "range") ? options.range.split(":") : worksheet[ "!ref" ].split(":");
+    let range = Object.hasOwn(this.options, "range") ? options.range.split(":") : this.worksheet[ "!ref" ].split(":");
     if (range.length > 0)
       this.topLeft = this.getAddress(range[ 0 ]);
     if (range.length > 1)
@@ -73,32 +67,150 @@ module.exports = class XlsxSheetReader extends Readable {
     this.tableFound = this.headingFound;
     this.tableDone = false;
     this._headersRow;
-  }
 
-  async _construct(callback) {
+    // parser state
     this.started = false;
-    callback();
+    this.paused = false;
+    this.cancelled = false;
   }
 
   /**
-   * Parse the worksheet cells.
-   * @returns Rows an array containing arrays of data values.
-   * If using an event listener the return value will be an empty array.
+   * Parse worksheet cells.
+   * @returns an array of rows (arrays) containing ordered cell values.
+   * If using an event listener then return value will be an empty array.
    */
   async parse() {
+    // console.debug("parser parse");
 
     try {
-      await this.parseCells();
+      // parsing state
+      this.entries = Object.entries(this.worksheet);
+      this.pos = 0;
+      this.len = this.entries.length;
+      this.prevAddress = this.topLeft;
+      this.row = [];
+      this.count = 0;
+      this.started = true;
 
-      this.push(null);
-      // this.emit("end");
-      // return this.rows;
+      await this.parseCells();
+      return this.rows;
     }
     catch (err) {
       console.error(err);
-      this.destroy(err);
-      //this.emit("error", err);
+      this.emit("error", err);
     }
+  }
+
+  pause() {
+    // console.debug("parser pause");
+    this.paused = true;
+  }
+
+  resume() {
+    // console.debug("parser resume");
+    if (this.paused && !this.cancelled) {
+      this.paused = false;
+      this.parseCells();
+    }
+  }
+
+  cancel() {
+    // console.debug("parser cancel");
+    this.cancelled = true;
+  }
+
+  /**
+   * Iterate worksheet cells and output rows.
+   */
+  async parseCells() {
+    if (this.pos >= this.len)
+      return;
+
+    for (; this.pos < this.len; this.pos++) {
+      if (this.tableDone || this.paused || this.cancelled)
+        break;
+
+      let [ a1_address, cell ] = this.entries[ this.pos ];
+      if (a1_address[ 0 ] === '!') {
+        if (a1_address === "!ref") {
+
+        }
+        continue;
+      }
+
+      let address = this.getAddress(a1_address);
+      if (this.inRange(address)) {
+
+        if (this.row.length >= 0 && (address.row !== this.prevAddress.row)) {
+          if (this.missingCells && this.row.length >= this.cells.min) {
+            // insert missing cells at end of row
+            let col = this.incCol(this.prevAddress.column);
+            while (this.lteCol(col, this.bottomRight.column)) {
+              this.row.push(null);
+              col = this.incCol(col);
+            }
+          }
+
+          // done with this row
+          if (this.process(this.row))
+            await this.output(this.row);
+
+          // start new row
+          this.row = [];
+          this.prevAddress.row = address.row;
+          this.prevAddress.column = this.topLeft.column;
+        }
+
+        if (this.missingCells) {
+          // insert missing cells into row
+          let col = this.incCol(this.prevAddress.column);
+          while (this.ltCol(col, address.column)) {
+            this.row.push(null);
+            col = this.incCol(col);
+          }
+        }
+
+        // add cell value to row
+        // https://docs.sheetjs.com/docs/csf/cell#cell-types
+        switch (cell.t) {
+          case "n": // numeric code
+            if (XLSX.SSF.is_date(cell.z))
+              // date format, take the text version; cellDates: false
+              this.row.push(cell.w)
+            else
+              this.row.push(cell.v);
+            break;
+
+          case "s": // string text
+            if ((Object.hasOwn(this.options, "trim") ? this.options.trim : true))
+              this.row.push(cell.v.trim());
+            else
+              this.row.push(cell.v);
+            break;
+
+          case "d": // value converted to UTC string by Sheet.js; cellDates: true
+          case "b": // boolean
+            this.row.push(cell.v);
+            break;
+
+          case "e": // error
+          case "z": // stub
+          default:
+            // do nothing
+            break;
+        }
+
+        this.prevAddress = address;
+      }
+    }
+
+    // push last row
+    if (!this.paused && !this.cancelled && this.process(this.row)) {
+      await this.output(this.row);
+    }
+
+    if (!this.paused || this.cancelled)
+      this.emit("end");
   }
 
   getAddress(a1_address) {
@@ -171,103 +283,12 @@ module.exports = class XlsxSheetReader extends Readable {
   }
 
   /**
-   * Iterate the cells and determine rows.
-   */
-  async parseCells() {
-
-    let row = [];
-    this.count = 1;
-
-    let prevAddress = this.topLeft;
-    for (let [ a1_address, cell ] of Object.entries(this.worksheet)) {
-      if (this.tableDone)
-        break;
-
-      if (a1_address[ 0 ] === '!') {
-        if (a1_address === "!ref") {
-
-        }
-        continue;
-      }
-
-      let address = this.getAddress(a1_address);
-      if (this.inRange(address)) {
-
-        if (row.length >= 0 && (address.row !== prevAddress.row)) {
-          if (this.missingCells && row.length >= this.cells.min) {
-            // insert missing cells at end of row
-            let col = this.incCol(prevAddress.column);
-            while (this.lteCol(col, this.bottomRight.column)) {
-              row.push(null);
-              col = this.incCol(col);
-            }
-          }
-
-          // done with this row
-          if (this.filters(row))
-            this.output(row);
-
-          // start new row
-          row = [];
-          prevAddress.row = address.row;
-          prevAddress.column = this.topLeft.column;
-        }
-
-        if (this.missingCells) {
-          // insert missing cells into row
-          let col = this.incCol(prevAddress.column);
-          while (this.ltCol(col, address.column)) {
-            row.push(null);
-            col = this.incCol(col);
-          }
-        }
-
-        // add cell value to row
-        // https://docs.sheetjs.com/docs/csf/cell#cell-types
-        switch (cell.t) {
-          case "n": // numeric code
-            if (XLSX.SSF.is_date(cell.z))
-              // date format, take the text version; cellDates: false
-              row.push(cell.w)
-            else
-              row.push(cell.v);
-            break;
-
-          case "s": // string text
-            if ((Object.hasOwn(this.options, "trim") ? this.options.trim : true))
-              row.push(cell.v.trim());
-            else
-              row.push(cell.v);
-            break;
-
-          case "d": // value converted to UTC string by Sheet.js; cellDates: true
-          case "b": // boolean
-            row.push(cell.v);
-            break;
-
-          case "e": // error
-          case "z": // stub
-          default:
-            // do nothing
-            break;
-        }
-
-        prevAddress = address;
-      }
-    }
-
-    // push last row
-    if (this.filters(row)) {
-      this.output(row);
-    }
-  }
-
-  /**
    * Performs row filtering.
    *
    * @param {*} row is an array of data values
+   * @returns {boolean} row passed filtering checks
    */
-  filters(row) {
+  process(row) {
     if (!this.headingFound) {
       this.headingFound = this.compareHeading(row, this.options.heading);
     }
@@ -278,17 +299,17 @@ module.exports = class XlsxSheetReader extends Readable {
       this.tableDone = !this.inCellRange(row.length) || this.compareHeading(row, this.options.stopHeading);
     }
 
-    let output = this.headingFound && this.tableFound && !this.tableDone && this.inCellRange(row.length);
+    let forward = this.headingFound && this.tableFound && !this.tableDone && this.inCellRange(row.length);
 
-    if (output && (this.options.repeatingHeaders || this.options.repeating)) {
+    if (forward && (this.options.repeatingHeaders || this.options.repeating)) {
       // skip repeating header rows
       if (!this._headersRow)
         this._headersRow = row;
       else
-        output = !this.rowsEqual(this._headersRow, row);
+        forward = !this.rowsEqual(this._headersRow, row);
     }
 
-    return output;
+    return forward;
   }
 
   /**
@@ -296,16 +317,15 @@ module.exports = class XlsxSheetReader extends Readable {
    *
    * @param {*} row is an array of data values
    */
-  output(row) {
-    this.push(row);
-    /*
+  async output(row) {
+    this.count++;
+    //// console.debug("parser output " + this.count);
+
     if (this.listenerCount("data") > 0) {
       this.emit("data", row);
     }
     else
       this.rows.push(row);
-    */
-    this.count++;
   }
 
   /**
@@ -341,27 +361,6 @@ module.exports = class XlsxSheetReader extends Readable {
     }
 
     return true;
-  }
-
-  _destroy() {
-    this.options.tableDone = true;
-  }
-
-  /**
-   * Fetch data from the underlying resource.
-   * @param {*} size <number> Number of bytes to read asynchronously
-   */
-  async _read(size) {
-    // ignore size
-    try {
-      if (!this.started) {
-        this.started = true;
-        this.parse();
-      }
-    }
-    catch (err) {
-      this.destroy(err);
-    }
   }
 
 };
