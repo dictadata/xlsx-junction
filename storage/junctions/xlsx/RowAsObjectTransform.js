@@ -48,6 +48,7 @@ module.exports = exports = class RowAsObjectTransform extends Transform {
       }
       this.push(obj);
     }
+
     callback();
   }
 
