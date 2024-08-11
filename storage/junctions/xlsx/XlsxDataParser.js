@@ -133,7 +133,7 @@ module.exports = class XlsxDataParser extends EventEmitter {
       let [ a1_address, cell ] = this.entries[ this.pos ];
       if (a1_address[ 0 ] === '!') {
         if (a1_address === "!ref") {
-
+          // could log a warning, but shouldn't happen
         }
         continue;
       }

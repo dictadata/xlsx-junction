@@ -24,7 +24,6 @@ module.exports = class XlsxDataReader extends Readable {
     super(streamOptions);
 
     this.options = options || {};
-
     this.parser;
     this.count = 0;
   }
